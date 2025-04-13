@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Recruiter Login - Finna</title>
+  <style>
+    /* Same styling as before */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f8fc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+      color: #1E90FF;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background-color: #1E90FF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Recruiter Login</h2>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button id="loginButton">Login</button>
+    <div class="error" id="errorMsg"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDkh6B0e8A6uZrSxqqXDaRE9mnCOQMTHQM",
+      authDomain: "finna-52a34.firebaseapp.com",
+      projectId: "finna-52a34",
+      storageBucket: "finna-52a34.appspot.com",
+      messagingSenderId: "581244699731",
+      appId: "1:581244699731:web:f2947f4651cafbf766b2a6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.getElementById('loginButton').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.textContent = "";
+
+      if (!email || !password) {
+        errorMsg.textContent = "Please fill in both fields.";
+        return;
+      }
+
+      try {
+        const userCred = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCred.user;
+
+        const q = query(collection(db, "recruiters"), where("email", "==", email));
+        const snap = await getDocs(q);
+
+        if (!snap.empty) {
+          const data = snap.docs[0].data();
+          localStorage.setItem("orgName", data.orgName);
+          window.location.href = "recruiter-dashboard.html";
+        } else {
+          // Redirect to profile creation if profile doesn't exist
+          window.location.href = "recruiter-profile.html";
+        }
+
+      } catch (err) {
+        if (err.code === "auth/user-not-found") {
+          errorMsg.textContent = "No user found with this email.";
+        } else if (err.code === "auth/wrong-password") {
+          errorMsg.textContent = "Incorrect password. Please try again.";
+        } else {
+          errorMsg.textContent = "Login failed. Please try again.";
+        }
+      }
+    });
+  </script>
+</body>
+</html>

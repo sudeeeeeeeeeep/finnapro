@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Finna – Recruiter Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+  <style>
+    :root {
+      --black: #1a1a1a;
+      --dark-gray: #333333;
+      --gray: #666666;
+      --light-gray: #e5e5e5;
+      --white: #ffffff;
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+      --shadow-md: 0 6px 12px rgba(0,0,0,0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: var(--white);
+    }
+
+    .container {
+      background: var(--white);
+      padding: 40px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    h2:after {
+      content: '';
+      width: 40px;
+      height: 3px;
+      background: var(--black);
+      position: absolute;
+      bottom: -0.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      margin: 12px 0;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--light-gray);
+      font-size: 1rem;
+      background: var(--white);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--black);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 15px;
+    }
+
+    .btn-primary {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: var(--dark-gray);
+      transform: translateY(-2px);
+    }
+
+    .btn-google {
+      background: var(--white);
+      color: var(--black);
+      border: 2px solid var(--gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-google:hover {
+      border-color: var(--black);
+      transform: translateY(-2px);
+    }
+
+    .btn-google i {
+      font-size: 1.2rem;
+    }
+
+    .error {
+      color: #ff4444;
+      margin-top: 15px;
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+        max-width: 340px;
+      }
+
+      h2 {
+        font-size: 1.75rem;
+      }
+
+      input {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+      }
+
+      .btn {
+        padding: 12px;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <h2>Recruiter Login</h2>
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button class="btn btn-primary" id="loginButton">Login</button>
+    <button class="btn btn-google" id="googleLogin">
+      <i class="fab fa-google"></i> Sign in with Google
+    </button>
+    <div class="error" id="errorMsg"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      signInWithPopup,
+      GoogleAuthProvider
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDkh6B0e8A6uZrSxqqXDaRE9mnCOQMTHQM",
+      authDomain: "finna-52a34.firebaseapp.com",
+      projectId: "finna-52a34",
+      storageBucket: "finna-52a34.appspot.com",
+      messagingSenderId: "581244699731",
+      appId: "1:581244699731:web:f2947f4651cafbf766b2a6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    // Email/Password login
+    document.getElementById('loginButton').addEventListener('click', async () => {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.textContent = "";
+
+      if (!email || !password) {
+        errorMsg.textContent = "Please fill in both fields.";
+        return;
+      }
+
+      try {
+        const userCred = await signInWithEmailAndPassword(auth, email, password);
+        await handleLogin(userCred.user.email, userCred.user.uid);
+      } catch (err) {
+        errorMsg.textContent =
+          err.code === "auth/user-not-found" ? "No user found." :
+          err.code === "auth/wrong-password" ? "Incorrect password." :
+          err.code === "auth/invalid-email" ? "Invalid email format." :
+          "Login failed.";
+      }
+    });
+
+    // Google login
+    document.getElementById("googleLogin").addEventListener("click", async () => {
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.textContent = "";
+
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        await handleLogin(user.email, user.uid);
+      } catch (err) {
+        errorMsg.textContent = 
+          err.code === "auth/popup-closed-by-user" ? "Google login was cancelled." :
+          "Google login failed.";
+      }
+    });
+
+    // Check if recruiter profile exists
+    async function handleLogin(email, uid) {
+      const q = query(collection(db, "recruiters"), where("email", "==", email));
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        const data = snap.docs[0].data();
+        localStorage.setItem("orgName", data.orgName || "");
+        window.location.href = "recruiter-dashboard.html";
+      } else {
+        window.location.href = "recruiter-profile.html";
+      }
+    }
+
+    // Particles background
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 50 },
+        color: { value: "#1a1a1a" },
+        shape: { type: "circle" },
+        opacity: { value: 0.4 },
+        size: { value: 2.5 },
+        move: { 
+          enable: true, 
+          speed: 0.8,
+          direction: "none",
+          random: true,
+          straight: false,
+          out_mode: "out"
+        },
+        line_linked: {
+          enable: true,
+          distance: 120,
+          color: "#1a1a1a",
+          opacity: 0.1,
+          width: 1
+        }
+      },
+      interactivity: {
+        events: {
+          onhover: { enable: true, mode: "repulse" }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

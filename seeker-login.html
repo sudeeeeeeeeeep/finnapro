@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Finna – Job Seeker Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+  <style>
+    :root {
+      --black: #1a1a1a;
+      --dark-gray: #333;
+      --gray: #666;
+      --light-gray: #e5e5e5;
+      --white: #fff;
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+      --shadow-md: 0 6px 12px rgba(0,0,0,0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--black);
+      background: var(--white);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: var(--white);
+    }
+
+    .container {
+      background: var(--white);
+      padding: 40px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    h2:after {
+      content: '';
+      width: 40px;
+      height: 3px;
+      background: var(--black);
+      position: absolute;
+      bottom: -0.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      margin: 12px 0;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--light-gray);
+      font-size: 1rem;
+      background: var(--white);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--black);
+      box-shadow: var(--shadow-sm);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: var(--dark-gray);
+      transform: translateY(-2px);
+    }
+
+    .google-btn {
+      background: #ffffff;
+      color: #1a1a1a;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .error {
+      color: #ff4444;
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+
+    .links {
+      margin-top: 25px;
+      font-size: 0.9rem;
+      color: var(--gray);
+    }
+
+    .links a {
+      color: var(--black);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0 5px;
+    }
+
+    .links a:hover {
+      color: var(--dark-gray);
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+        max-width: 340px;
+      }
+
+      h2 {
+        font-size: 1.75rem;
+      }
+
+      input {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+      }
+
+      button {
+        padding: 12px;
+        font-size: 0.95rem;
+      }
+
+      .links {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <h2>Seeker Login</h2>
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button onclick="loginSeeker()">Login</button>
+    <button class="google-btn" id="googleLoginBtn"><i class="fab fa-google"></i> Continue with Google</button>
+    <div class="error" id="errorMsg"></div>
+    <div class="links">
+      <a href="seeker-signup.html">Create an account</a> | 
+      <a href="forgot-password.html">Forgot password?</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDkh6B0e8A6uZrSxqqXDaRE9mnCOQMTHQM",
+      authDomain: "finna-52a34.firebaseapp.com",
+      projectId: "finna-52a34",
+      storageBucket: "finna-52a34.appspot.com",
+      messagingSenderId: "581244699731",
+      appId: "1:581244699731:web:f2947f4651cafbf766b2a6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    window.loginSeeker = async function () {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.textContent = "";
+
+      if (!email || !password) {
+        errorMsg.textContent = "Please fill in both email and password.";
+        return;
+      }
+
+      try {
+        const userCred = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCred.user;
+        const profileSnap = await getDoc(doc(db, "seekers", user.uid));
+
+        if (!profileSnap.exists()) {
+          window.location.href = "seeker-profile.html";
+        } else {
+          sessionStorage.setItem("seekerProfile", JSON.stringify(profileSnap.data()));
+          window.location.href = "seeker.html";
+        }
+      } catch (error) {
+        console.error("Login error:", error.message);
+        handleLoginError(error, errorMsg);
+      }
+    };
+
+    document.getElementById('googleLoginBtn').addEventListener('click', async () => {
+      const errorMsg = document.getElementById('errorMsg');
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        const profileSnap = await getDoc(doc(db, "seekers", user.uid));
+        if (!profileSnap.exists()) {
+          window.location.href = "seeker-profile.html";
+        } else {
+          sessionStorage.setItem("seekerProfile", JSON.stringify(profileSnap.data()));
+          window.location.href = "seeker.html";
+        }
+      } catch (error) {
+        console.error("Google Sign-In Error:", error.message);
+        errorMsg.textContent = "Google sign-in failed. Try again.";
+      }
+    });
+
+    function handleLoginError(error, errorElement) {
+      switch (error.code) {
+        case 'auth/invalid-email':
+          errorElement.textContent = "Invalid email format.";
+          break;
+        case 'auth/user-not-found':
+          errorElement.textContent = "No account found with this email.";
+          break;
+        case 'auth/wrong-password':
+          errorElement.textContent = "Incorrect password.";
+          break;
+        case 'auth/too-many-requests':
+          errorElement.textContent = "Too many attempts. Try again later.";
+          break;
+        default:
+          errorElement.textContent = "Login failed. Please try again.";
+      }
+    }
+
+    document.getElementById('password').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        loginSeeker();
+      }
+    });
+
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 50 },
+        color: { value: "#1a1a1a" },
+        shape: { type: "circle" },
+        opacity: { value: 0.4 },
+        size: { value: 2.5 },
+        move: { enable: true, speed: 0.8, random: true },
+        line_linked: {
+          enable: true,
+          distance: 120,
+          color: "#1a1a1a",
+          opacity: 0.1,
+          width: 1
+        }
+      },
+      interactivity: {
+        events: {
+          onhover: { enable: true, mode: "repulse" }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Finna – Job Search</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --light-black: #1a1a1a;
+      --gray: #d1d1d1;
+      --dark-gray: #333333;
+      --border: #e0e0e0;
+      --shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--white);
+      background: var(--black);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+    }
+
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--black);
+      z-index: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--light-black);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    #nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    #nav a {
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      background: var(--dark-gray);
+      border-radius: 8px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    #nav a:hover {
+      background: var(--white);
+      color: var(--black);
+    }
+
+    #cardContainer {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      margin: 0 auto;
+      touch-action: none;
+    }
+
+    .card {
+      position: absolute;
+      width: 100%;
+      background: var(--light-black);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      overflow-y: auto;
+      user-select: none;
+    }
+
+    .card h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--white);
+    }
+
+    .card-detail {
+      margin: 10px 0;
+      font-size: 0.95rem;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-detail i {
+      color: var(--white);
+      font-size: 1rem;
+    }
+
+    .company a {
+      color: var(--white);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .company a:hover {
+      text-decoration: underline;
+    }
+
+    .skills span {
+      display: inline-block;
+      background: var(--dark-gray);
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin: 4px 4px 0 0;
+      font-size: 0.85rem;
+      color: var(--gray);
+    }
+
+    .card-footer {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--gray);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .buttons button {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--white);
+      border-radius: 8px;
+      background: var(--light-black);
+      color: var(--white);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .buttons button:hover {
+      background: var(--white);
+      color: var(--black);
+    }
+
+    #noJobs {
+      text-align: center;
+      color: var(--gray);
+      font-size: 1rem;
+      margin-top: 20px;
+    }
+
+    .undo {
+      display: none;
+      width: 100%;
+      margin-top: 20px;
+      padding: 10px;
+      background: var(--white);
+      color: var(--black);
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .undo:hover {
+      background: var(--gray);
+    }
+
+    .notification {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      background: var(--white);
+      color: var(--black);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow);
+      transition: opacity 0.5s ease;
+      z-index: 10;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        max-width: 600px;
+        padding: 32px;
+      }
+      h1 {
+        font-size: 1.75rem;
+      }
+      #cardContainer {
+        height: 500px;
+      }
+      .card h2 {
+        font-size: 1.5rem;
+      }
+      .card-detail {
+        font-size: 1rem;
+      }
+      .buttons button, .undo {
+        padding: 12px;
+        font-size: 1rem;
+      }
+      #nav a {
+        padding: 8px 16px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="container">
+    <div class="header">
+      <h1>Job Opportunities</h1>
+      <div id="nav">
+        <a href="saved.html"><i class="fas fa-bookmark"></i> Saved</a>
+        <a href="my_applications.html"><i class="fas fa-file-alt"></i> Apps</a>
+        <a href="seeker-profile.html"><i class="fas fa-user"></i> Profile</a>
+      </div>
+    </div>
+    <div id="cardContainer"></div>
+    <p id="noJobs" style="display:none;">No jobs match your preferences. Update your profile to see more.</p>
+    <button class="undo"><i class="fas fa-undo"></i> Undo Last Action</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      getDocs, 
+      query, 
+      where, 
+      addDoc, 
+      doc, 
+      getDoc, 
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDkh6B0e8A6uZrSxqqXDaRE9mnCOQMTHQM",
+      authDomain: "finna-52a34.firebaseapp.com",
+      projectId: "finna-52a34",
+      storageBucket: "finna-52a34.appspot.com",
+      messagingSenderId: "581244699731",
+      appId: "1:581244699731:web:f2947f4651cafbf766b2a6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    const cardContainer = document.getElementById('cardContainer');
+    const noJobs = document.getElementById('noJobs');
+    const undoBtn = document.querySelector(".undo");
+
+    let jobQueue = [];
+    let seekerData = null;
+    let lastJob = null;
+    let lastAction = null;
+    let availableSkills = [];
+
+    const locationData = {
+      "Andhra Pradesh": ["Alluri Sitharama Raju", "Anakapalli", "Anantapur", "Annamayya", "Bapatla", "Chittoor", "Dr. B.R. Ambedkar Konaseema", "East Godavari", "Eluru", "Guntur", "Kadapa", "Kakinada", "Krishna", "Kurnool", "Nandyal", "NTR", "Palnadu", "Parvathipuram Manyam", "Prakasam", "Sri Sathya Sai", "Srikakulam", "Tirupati", "Visakhapatnam", "Vizianagaram", "West Godavari"],
+      "Arunachal Pradesh": ["Anjaw", "Changlang", "Dibang Valley", "East Kameng", "East Siang", "Itanagar", "Kamle", "Kra Daadi", "Kurung Kumey", "Lepa Rada", "Lohit", "Longding", "Lower Dibang Valley", "Lower Siang", "Lower Subansiri", "Namsai", "Pakke-Kessang", "Papum Pare", "Shi-Yomi", "Siang", "Tawang", "Tirap", "Upper Siang", "Upper Subansiri", "West Kameng", "West Siang"],
+      "Assam": ["Bajali", "Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang", "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat", "Hailakandi", "Hojai", "Jorhat", "Kamrup", "Kamrup Metropolitan", "Karbi Anglong", "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari", "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tamulpur", "Tinsukia", "Udalguri", "West Karbi Anglong"],
+      "Bihar": ["Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar", "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur", "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger", "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"],
+      "Chhattisgarh": ["Balod", "Baloda Bazar", "Balrampur-Ramanujganj", "Bastar", "Bemetara", "Bijapur", "Bilaspur", "Dantewada", "Dhamtari", "Durg", "Gariaband", "Gaurela-Pendra-Marwahi", "Janjgir-Champa", "Jashpur", "Kabirdham", "Kanker", "Khairagarh-Chhuikhadan-Gandai", "Kondagaon", "Korba", "Korea", "Mahasamund", "Manendragarh-Chirmiri-Bharatpur", "Mohla-Manpur-Ambagarh Chowki", "Mungeli", "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sakti", "Sarangarh-Bilaigarh", "Sukma", "Surajpur", "Surguja"],
+      "Goa": ["North Goa", "South Goa"],
+      "Gujarat": ["Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha", "Bharuch", "Bhavnagar", "Botad", "Chhota Udaipur", "Dahod", "Dang", "Devbhoomi Dwarka", "Gandhinagar", "Gir Somnath", "Jamnagar", "Junagadh", "Kheda", "Kutch", "Mahisagar", "Mehsana", "Morbi", "Narmada", "Navsari", "Panchmahal", "Patan", "Porbandar", "Rajkot", "Sabarkantha", "Surat", "Surendranagar", "Tapi", "Vadodara", "Valsad"],
+      "Haryana": ["Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad", "Gurugram", "Hisar", "Jhajjar", "Jind", "Kaithal", "Karnal", "Kurukshetra", "Mahendragarh", "Nuh", "Palwal", "Panchkula", "Panipat", "Rewari", "Rohtak", "Sirsa", "Sonipat", "Yamunanagar"],
+      "Himachal Pradesh": ["Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur", "Kullu", "Lahaul and Spiti", "Mandi", "Shimla", "Sirmaur", "Solan", "Una"],
+      "Jharkhand": ["Bokaro", "Chatra", "Deoghar", "Dhanbad", "Dumka", "East Singhbhum", "Garhwa", "Giridih", "Godda", "Gumla", "Hazaribagh", "Jamtara", "Khunti", "Koderma", "Latehar", "Lohardaga", "Pakur", "Palamu", "Ramgarh", "Ranchi", "Sahibganj", "Seraikela Kharsawan", "Simdega", "West Singhbhum"],
+      "Karnataka": ["Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban", "Bidar", "Chamarajanagar", "Chikkaballapura", "Chikkamagaluru", "Chitradurga", "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal", "Mandya", "Mysuru", "Raichur", "Ramanagara", "Shivamogga", "Tumakuru", "Udupi", "Uttara Kannada", "Vijayanagara", "Vijayapura", "Yadgir"],
+      "Kerala": ["Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Kozhikode", "Malappuram", "Palakkad", "Pathanamthitta", "Thiruvananthapuram", "Thrissur", "Wayanad"],
+      "Madhya Pradesh": ["Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat", "Barwani", "Betul", "Bhind", "Bhopal", "Burhanpur", "Chhatarpur", "Chhindwara", "Damoh", "Datia", "Dewas", "Dhar", "Dindori", "Guna", "Gwalior", "Harda", "Hoshangabad", "Indore", "Jabalpur", "Jhabua", "Katni", "Khandwa", "Khargone", "Mandla", "Mandsaur", "Morena", "Narmadapuram", "Narsinghpur", "Neemuch", "Niwari", "Panna", "Raisen", "Rajgarh", "Ratlam", "Rewa", "Sagar", "Satna", "Sehore", "Seoni", "Shahdol", "Shajapur", "Sheopur", "Shivpuri", "Sidhi", "Singrauli", "Tikamgarh", "Ujjain", "Umaria", "Vidisha"],
+      "Maharashtra": ["Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara", "Buldhana", "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli", "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", "Nagpur", "Nanded", "Nandurbar", "Nashik", "Osmanabad", "Palghar", "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara", "Sindhudurg", "Solapur", "Thane", "Wardha", "Washim", "Yavatmal"],
+      "Manipur": ["Bishnupur", "Chandel", "Churachandpur", "Imphal East", "Imphal West", "Jiribam", "Kakching", "Kamjong", "Kangpokpi", "Noney", "Pherzawl", "Senapati", "Tamenglong", "Tengnoupal", "Thoubal", "Ukhrul"],
+      "Meghalaya": ["East Garo Hills", "East Jaintia Hills", "East Khasi Hills", "North Garo Hills", "Ri-Bhoi", "South Garo Hills", "South West Garo Hills", "South West Khasi Hills", "West Garo Hills", "West Jaintia Hills", "West Khasi Hills"],
+      "Mizoram": ["Aizawl", "Champhai", "Hnahthial", "Khawzawl", "Kolasib", "Lawngtlai", "Lunglei", "Mamit", "Saiha", "Saitual", "Serchhip"],
+      "Nagaland": ["Chumoukedima", "Dimapur", "Kiphire", "Kohima", "Longleng", "Mokokchung", "Mon", "Niuland", "Noklak", "Peren", "Phek", "Shamator", "Tseminyu", "Tuensang", "Wokha", "Zunheboto"],
+      "Odisha": ["Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak", "Boudh", "Cuttack", "Deogarh", "Dhenkanal", "Gajapati", "Ganjam", "Jagatsinghpur", "Jajpur", "Jharsuguda", "Kalahandi", "Kandhamal", "Kendrapara", "Kendujhar", "Khordha", "Koraput", "Malkangiri", "Mayurbhanj", "Nabarangpur", "Nayagarh", "Nuapada", "Puri", "Rayagada", "Sambalpur", "Subarnapur", "Sundargarh"],
+      "Punjab": ["Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka", "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", "Ludhiana", "Malerkotla", "Mansa", "Moga", "Muktsar", "Pathankot", "Patiala", "Rupnagar", "Sangrur", "SAS Nagar", "Shaheed Bhagat Singh Nagar", "Tarn Taran"],
+      "Rajasthan": ["Ajmer", "Alwar", "Anupgarh", "Balotra", "Banswara", "Baran", "Barmer", "Beawar", "Bharatpur", "Bhilwara", "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa", "Deeg", "Dholpur", "Dudu", "Dungarpur", "Ganganagar", "Hanumangarh", "Jaipur", "Jaisalmer", "Jalore", "Jhalawar", "Jhunjhunu", "Jodhpur", "Karauli", "Kekri", "Khairthal-Tijara", "Kota", "Nagaur", "Neem ka Thana", "Pali", "Phalodi", "Pratapgarh", "Rajsamand", "Salumbar", "Sanchore", "Sawai Madhopur", "Shahpura", "Sikar", "Sirohi", "Tonk", "Udaipur"],
+      "Sikkim": ["East Sikkim", "North Sikkim", "South Sikkim", "West Sikkim"],
+      "Tamil Nadu": ["Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakurichi", "Kancheepuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"],
+      "Telangana": ["Adilabad", "Bhadradri Kothagudem", "Hyderabad", "Jagtial", "Jangaon", "Jayashankar Bhupalpally", "Jogulamba Gadwal", "Kamareddy", "Karimnagar", "Khammam", "Komaram Bheem", "Mahabubabad", "Mahbubnagar", "Mancherial", "Medak", "Medchal-Malkajgiri", "Mulugu", "Nagarkurnool", "Nalgonda", "Narayanpet", "Nirmal", "Nizamabad", "Peddapalli", "Rajanna Sircilla", "Ranga Reddy", "Sangareddy", "Siddipet", "Suryapet", "Vikarabad", "Wanaparthy", "Warangal Rural", "Warangal Urban", "Yadadri Bhuvanagiri"],
+      "Tripura": ["Dhalai", "Gomati", "Khowai", "North Tripura", "Sepahijala", "South Tripura", "Unakoti", "West Tripura"],
+      "Uttar Pradesh": ["Agra", "Aligarh", "Ambedkar Nagar", "Amethi", "Amroha", "Auraiya", "Ayodhya", "Azamgarh", "Baghpat", "Bahraich", "Ballia", "Balrampur", "Banda", "Barabanki", "Bareilly", "Basti", "Bhadohi", "Bijnor", "Budaun", "Bulandshahr", "Chandauli", "Chitrakoot", "Deoria", "Etah", "Etawah", "Farrukhabad", "Fatehpur", "Firozabad", "Gautam Buddha Nagar", "Ghaziabad", "Ghazipur", "Gonda", "Gorakhpur", "Hamirpur", "Hapur", "Hardoi", "Hathras", "Jalaun", "Jaunpur", "Jhansi", "Kannauj", "Kanpur Dehat", "Kanpur Nagar", "Kasganj", "Kaushambi", "Kushinagar", "Lakhimpur Kheri", "Lalitpur", "Lucknow", "Maharajganj", "Mahoba", "Mainpuri", "Mathura", "Mau", "Meerut", "Mirzapur", "Moradabad", "Muzaffarnagar", "Pilibhit", "Pratapgarh", "Prayagraj", "Raebareli", "Rampur", "Saharanpur", "Sambhal", "Sant Kabir Nagar", "Shahjahanpur", "Shamli", "Shravasti", "Siddharthnagar", "Sitapur", "Sonbhadra", "Sultanpur", "Unnao", "Varanasi"],
+      "Uttarakhand": ["Almora", "Bageshwar", "Chamoli", "Champawat", "Dehradun", "Haridwar", "Nainital", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"],
+      "West Bengal": ["Alipurduar", "Bankura", "Birbhum", "Cooch Behar", "Dakshin Dinajpur", "Darjeeling", "Hooghly", "Howrah", "Jalpaiguri", "Jhargram", "Kalimpong", "Kolkata", "Malda", "Murshidabad", "Nadia", "North 24 Parganas", "Paschim Bardhaman", "Paschim Medinipur", "Purba Bardhaman", "Purba Medinipur", "Purulia", "South 24 Parganas", "Uttar Dinajpur"],
+      "Andaman and Nicobar Islands": ["Nicobar", "North and Middle Andaman", "South Andaman"],
+      "Chandigarh": ["Chandigarh"],
+      "Dadra and Nagar Haveli and Daman and Diu": ["Dadra and Nagar Haveli", "Daman", "Diu"],
+      "Delhi": ["Central Delhi", "East Delhi", "New Delhi", "North Delhi", "North East Delhi", "North West Delhi", "Shahdara", "South Delhi", "South East Delhi", "South West Delhi", "West Delhi"],
+      "Jammu and Kashmir": ["Anantnag", "Bandipora", "Baramulla", "Budgam", "Doda", "Ganderbal", "Jammu", "Kathua", "Kishtwar", "Kulgam", "Kupwara", "Poonch", "Pulwama", "Rajouri", "Ramban", "Reasi", "Samba", "Shopian", "Srinagar", "Udhampur"],
+      "Ladakh": ["Kargil", "Leh"],
+      "Lakshadweep": ["Lakshadweep"],
+      "Puducherry": ["Karaikal", "Mahe", "Puducherry", "Yanam"]
+    };
+
+    async function loadSkills() {
+      console.log("Loading skills from Firestore...");
+      try {
+        const docRef = doc(db, "tags", "keywords");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          availableSkills = docSnap.data().skills || [];
+          console.log("Skills loaded:", availableSkills);
+        } else {
+          console.warn("No 'keywords' document found in 'tags' collection.");
+          availableSkills = [];
+        }
+      } catch (error) {
+        console.error("Error in loadSkills:", error.message, error.code);
+        throw error;
+      }
+    }
+
+    function workplaceMatch(seekerPref, jobType) {
+      if (!seekerPref || !jobType) {
+        console.log("Workplace data missing, defaulting to true", { seekerPref, jobType });
+        return true;
+      }
+      seekerPref = seekerPref.toLowerCase().trim();
+      jobType = jobType.toLowerCase().trim();
+      return (
+        seekerPref === jobType ||
+        (seekerPref === "hybrid" && (jobType === "onsite" || jobType === "remote")) ||
+        (jobType === "hybrid" && (seekerPref === "onsite" || seekerPref === "remote"))
+      );
+    }
+
+    function locationMatch(seeker, job) {
+      if (!job.location || !job.state || !seeker.locationPreference) {
+        console.log("Location data incomplete, defaulting to true", { jobLocation: job.location, jobState: job.state, seekerPref: seeker.locationPreference });
+        return true;
+      }
+      const jobLoc = job.location.toLowerCase().trim();
+      const jobState = job.state.toLowerCase().trim();
+      const seekerPref = seeker.locationPreference.toLowerCase().trim();
+
+      if (seekerPref === "district") {
+        const match = jobLoc === (seeker.district || "").toLowerCase().trim() && 
+                      jobState === (seeker.state || "").toLowerCase().trim();
+        console.log("District match:", match);
+        return match;
+      } else if (seekerPref === "state") {
+        const match = jobState === (seeker.state || "").toLowerCase().trim() ||
+                      locationData[seeker.state]?.map(d => d.toLowerCase().trim()).includes(jobLoc);
+        console.log("State match:", match);
+        return match;
+      } else if (seekerPref === "multiplestates") {
+        const match = (seeker.states || []).some(state => 
+          jobState === state.toLowerCase().trim() ||
+          locationData[state]?.map(d => d.toLowerCase().trim()).includes(jobLoc)
+        );
+        console.log("Multiple states match:", match);
+        return match;
+      }
+      console.log("Unknown location preference, defaulting to true");
+      return true;
+    }
+
+    function skillsMatch(seekerSkills, jobKeywords) {
+      if (!Array.isArray(seekerSkills) || !Array.isArray(jobKeywords) || seekerSkills.length === 0 || jobKeywords.length === 0) {
+        console.log("Skills data incomplete, defaulting to true", { seekerSkills, jobKeywords });
+        return true;
+      }
+      const seekerSkillsLower = seekerSkills.map(s => s.toLowerCase().trim());
+      const jobKeywordsLower = jobKeywords.map(k => k.toLowerCase().trim());
+      const matches = seekerSkillsLower.filter(skill => jobKeywordsLower.includes(skill)).length;
+      const matchPercentage = (matches / jobKeywordsLower.length) * 100;
+      console.log(`Skills match: ${matches}/${jobKeywordsLower.length} (${matchPercentage.toFixed(2)}%)`);
+      return matchPercentage >= 25;
+    }
+
+    function showNextJob() {
+      cardContainer.innerHTML = '';
+      if (jobQueue.length === 0) {
+        noJobs.style.display = 'block';
+        return;
+      }
+      const job = jobQueue[0];
+      const card = document.createElement('div');
+      card.className = 'card';
+      const workplaceText = { remote: 'Remote', onsite: 'On-site', hybrid: 'Hybrid' }[job.workplace?.toLowerCase()] || 'Not Specified';
+      card.innerHTML = `
+        <h2>${job.title || 'Untitled Job'}</h2>
+        <div class="card-detail company"><i class="fas fa-building"></i> <a href="company-profile.html?uid=${job.postedBy || 'unknown'}">${job.company || 'Unknown Company'}</a> (${workplaceText})</div>
+        <div class="card-detail location"><i class="fas fa-map-marker-alt"></i> ${job.location || 'Location N/A'}, ${job.state || 'N/A'}</div>
+        <div class="card-detail skills"><i class="fas fa-tools"></i> <div>${(job.keywords || []).map(k => `<span>${k}</span>`).join('') || 'N/A'}</div></div>
+        <div class="card-footer">Posted by: ${job.postedBy || 'Unknown'}</div>
+        <div class="buttons">
+          <button class="skip"><i class="fas fa-times"></i> Skip</button>
+          <button class="save"><i class="fas fa-bookmark"></i> Save</button>
+          <button class="apply"><i class="fas fa-paper-plane"></i> Apply</button>
+        </div>
+      `;
+      cardContainer.appendChild(card);
+
+      let startX = 0;
+      let isDragging = false;
+
+      card.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        card.style.transition = 'none';
+      });
+      card.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const diff = e.clientX - startX;
+        card.style.transform = `translateX(${diff}px) rotate(${diff / 20}deg)`;
+        card.style.opacity = 1 - Math.abs(diff) / 200;
+      });
+      card.addEventListener('mouseup', (e) => handleDragEnd(e, card));
+      card.addEventListener('mouseleave', () => resetDrag(card));
+
+      card.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        startX = e.touches[0].clientX;
+        card.style.transition = 'none';
+      });
+      card.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        const diff = e.touches[0].clientX - startX;
+        card.style.transform = `translateX(${diff}px) rotate(${diff / 20}deg)`;
+        card.style.opacity = 1 - Math.abs(diff) / 200;
+      });
+      card.addEventListener('touchend', (e) => handleDragEnd(e.changedTouches[0], card));
+
+      function handleDragEnd(e, cardElement) {
+        if (!isDragging) return;
+        const diff = (e.clientX || e.x) - startX;
+        isDragging = false;
+        cardElement.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+        if (Math.abs(diff) > 100) {
+          if (diff < 0) document.querySelector(".skip").click();
+          else document.querySelector(".apply").click();
+        } else {
+          cardElement.style.transform = 'translateX(0) rotate(0deg)';
+          cardElement.style.opacity = 1;
+        }
+      }
+
+      function resetDrag(cardElement) {
+        if (isDragging) {
+          isDragging = false;
+          cardElement.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+          cardElement.style.transform = 'translateX(0) rotate(0deg)';
+          cardElement.style.opacity = 1;
+        }
+      }
+
+      card.querySelector(".skip").addEventListener("click", () => {
+        lastJob = jobQueue.shift();
+        lastAction = "skip";
+        card.style.transform = "translateX(-100%) rotate(-10deg)";
+        card.style.opacity = 0;
+        undoBtn.style.display = "block";
+        setTimeout(showNextJob, 300);
+      });
+
+      card.querySelector(".apply").addEventListener("click", async () => {
+        try {
+          console.log("Applying to job:", job.id, "by seeker:", seekerData.uid);
+          await addDoc(collection(db, "applications"), {
+            jobId: job.id,
+            recruiterId: job.postedBy || "unknown",
+            seekerId: seekerData.uid,
+            seekerName: seekerData.name || "Unknown",
+            seekerEmail: seekerData.email,
+            appliedAt: serverTimestamp(),
+            status: "pending",
+            jobTitle: job.title || "Untitled",
+            company: job.company || "Unknown"
+          });
+          lastJob = jobQueue.shift();
+          lastAction = "apply";
+          card.style.transform = "translateX(100%) rotate(10deg)";
+          card.style.opacity = 0;
+          undoBtn.style.display = "block";
+          setTimeout(showNextJob, 300);
+          showNotification(`Applied to ${job.title || 'job'}`);
+        } catch (err) {
+          console.error("Error in apply:", err.message, err.code);
+          showNotification("Failed to apply: " + err.message);
+        }
+      });
+
+      card.querySelector(".save").addEventListener("click", async () => {
+        try {
+          console.log("Saving job:", job.id, "by seeker:", seekerData.uid);
+          await addDoc(collection(db, "saved"), {
+            jobId: job.id,
+            seekerId: seekerData.uid,
+            savedAt: serverTimestamp(),
+            title: job.title || "Untitled",
+            company: job.company || "Unknown",
+            location: job.location || "N/A",
+            workplace: job.workplace || "N/A"
+          });
+          showNotification("Job saved successfully");
+        } catch (err) {
+          console.error("Error in save:", err.message, err.code);
+          showNotification("Failed to save job: " + err.message);
+        }
+      });
+    }
+
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 500);
+      }, 3000);
+    }
+
+    undoBtn.addEventListener("click", () => {
+      if (lastJob && (lastAction === "apply" || lastAction === "skip")) {
+        jobQueue.unshift(lastJob);
+        lastJob = null;
+        lastAction = null;
+        undoBtn.style.display = "none";
+        showNextJob();
+      }
+    });
+
+    async function loadJobsForSeeker(seeker) {
+      seekerData = seeker;
+      console.log("Loading jobs for seeker:", seeker);
+
+      let appliedJobIds = [];
+      try {
+        console.log("Fetching applications for seekerId:", seeker.uid);
+        const appsSnapshot = await getDocs(query(collection(db, "applications"), where("seekerId", "==", seeker.uid)));
+        appliedJobIds = appsSnapshot.docs.map(doc => doc.data().jobId);
+        console.log("Applied job IDs:", appliedJobIds);
+      } catch (error) {
+        console.error("Error fetching applications:", error.message, error.code);
+        throw error;
+      }
+
+      let jobs = [];
+      try {
+        console.log("Fetching all jobs...");
+        const snapshot = await getDocs(collection(db, "jobs"));
+        jobs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        console.log("All jobs fetched:", jobs);
+      } catch (error) {
+        console.error("Error fetching jobs:", error.message, error.code);
+        throw error;
+      }
+
+      jobQueue = jobs.filter(job => {
+        const workplaceOk = workplaceMatch(seeker.workplace, job.workplace);
+        const locationOk = locationMatch(seeker, job);
+        const skillsOk = skillsMatch(seeker.skills, job.keywords);
+        const notApplied = !appliedJobIds.includes(job.id);
+        const notAlreadyApplied = !job.applicants?.includes(seeker.uid);
+
+        console.log(`Evaluating job: ${job.title || job.id}`);
+        console.log(`  - Workplace match: ${workplaceOk} (Seeker: ${seeker.workplace}, Job: ${job.workplace})`);
+        console.log(`  - Location match: ${locationOk} (Seeker: ${JSON.stringify({ locationPreference: seeker.locationPreference, state: seeker.state, district: seeker.district, states: seeker.states })}, Job: ${JSON.stringify({ location: job.location, state: job.state })})`);
+        console.log(`  - Skills match: ${skillsOk} (Seeker: ${seeker.skills}, Job: ${job.keywords})`);
+        console.log(`  - Not applied: ${notApplied} (Applied IDs: ${appliedJobIds})`);
+        console.log(`  - Not already applied: ${notAlreadyApplied} (Job applicants: ${job.applicants})`);
+
+        return workplaceOk && locationOk && skillsOk && notApplied && notAlreadyApplied;
+      });
+
+      console.log("Filtered job queue:", jobQueue);
+
+      if (jobQueue.length === 0) {
+        noJobs.style.display = 'block';
+      } else {
+        noJobs.style.display = 'none';
+        showNextJob();
+      }
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        console.log("User authenticated:", user.email, "UID:", user.uid);
+        try {
+          console.log("Fetching seeker profile for UID:", user.uid);
+          const docRef = doc(db, "seekers", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            seekerData = { uid: user.uid, ...docSnap.data() };
+            console.log("Seeker data loaded:", seekerData);
+            await loadSkills();
+            await loadJobsForSeeker(seekerData);
+          } else {
+            console.warn("No seeker profile found for UID:", user.uid);
+            alert("Please complete your seeker profile first.");
+            window.location.href = "seeker-profile.html";
+          }
+        } catch (error) {
+          console.error("Error in onAuthStateChanged:", error.message, error.code);
+          alert("Error loading profile: " + error.message);
+        }
+      } else {
+        console.log("No user authenticated, redirecting to login...");
+        window.location.href = "seeker-login.html";
+      }
+    });
+
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 50, density: { enable: true, value_area: 800 } },
+        color: { value: "#ffffff" },
+        shape: { type: "circle" },
+        opacity: { value: 0.3, random: true },
+        size: { value: 2, random: true },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#ffffff",
+          opacity: 0.2,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 1,
+          direction: "none",
+          random: true,
+          straight: false,
+          out_mode: "out"
+        }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: true, mode: "grab" },
+          onclick: { enable: true, mode: "push" },
+          resize: true
+        },
+        modes: {
+          grab: { distance: 140, line_linked: { opacity: 0.5 } },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    });
+  </script>
+</body>
+</html>

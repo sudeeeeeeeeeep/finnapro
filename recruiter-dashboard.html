@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Recruiter Dashboard - Finna</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+  <style>
+    :root {
+      --black: #1a1a1a;
+      --dark-gray: #333333;
+      --gray: #666666;
+      --light-gray: #e5e5e5;
+      --white: #ffffff;
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+      --shadow-md: 0 6px 12px rgba(0,0,0,0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: var(--white);
+    }
+
+    .container {
+      background: var(--white);
+      padding: 40px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      max-width: 1000px;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+    }
+
+    h2, h3 {
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    h2:after, h3:after {
+      content: '';
+      width: 40px;
+      height: 3px;
+      background: var(--black);
+      position: absolute;
+      bottom: -0.5rem;
+      left: 0;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px 16px;
+      margin: 8px 0;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--light-gray);
+      font-size: 1rem;
+      background: var(--white);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--black);
+      box-shadow: var(--shadow-sm);
+    }
+
+    select {
+      appearance: none;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="%23666666" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 16px center;
+      background-size: 12px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background: var(--dark-gray);
+      transform: translateY(-2px);
+    }
+
+    .btn-small {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .filters label {
+      font-weight: 600;
+      margin-right: 10px;
+    }
+
+    .filters select {
+      width: auto;
+      min-width: 150px;
+    }
+
+    .job-card {
+      background: var(--white);
+      padding: 20px;
+      margin: 15px 0;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+
+    .job-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .job-card-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .tag-container {
+      margin: 10px 0;
+      min-height: 40px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      background: var(--light-gray);
+      color: var(--black);
+      padding: 6px 12px;
+      margin: 5px 5px 0 0;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .tag:hover {
+      background: #d1d5db;
+    }
+
+    .tag-remove {
+      margin-left: 8px;
+      color: #ff4444;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal-content {
+      background: var(--white);
+      padding: 25px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 24px;
+      color: var(--gray);
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .close:hover {
+      color: var(--black);
+    }
+
+    .profile-section {
+      margin-bottom: 15px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: var(--radius-sm);
+    }
+
+    .profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .profile-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--black);
+    }
+
+    .profile-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .detail-item {
+      margin-bottom: 8px;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: var(--gray);
+    }
+
+    .resume-link {
+      color: var(--black);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .resume-link:hover {
+      text-decoration: underline;
+    }
+
+    .action-buttons {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .action-button {
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      color: var(--white);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .action-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .accept {
+      background-color: #28a745;
+    }
+
+    .reject {
+      background-color: #dc3545;
+    }
+
+    .message {
+      background-color: #007bff;
+    }
+
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      color: var(--white);
+    }
+
+    .status-pending {
+      background-color: #ff9800;
+    }
+
+    .status-accepted {
+      background-color: #28a745;
+    }
+
+    .status-rejected {
+      background-color: #dc3545;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+        max-width: 340px;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      input, select, .btn {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+      }
+
+      .filters {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .filters select {
+        width: 100%;
+      }
+
+      .job-card-buttons {
+        flex-direction: column;
+      }
+
+      .modal-content {
+        width: 95%;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <h2>Recruiter Dashboard</h2>
+    <div id="orgInfo"></div>
+    <button class="btn btn-small" onclick="window.location.href='recruiter-profile.html'">View/Edit Profile</button>
+
+    <div class="filters">
+      <label>Filter:</label>
+      <select id="filterRemote">
+        <option value="all">All Jobs</option>
+        <option value="remote">Remote Only</option>
+      </select>
+      <select id="sortOrder">
+        <option value="newest">Sort by Newest</option>
+        <option value="oldest">Sort by Oldest</option>
+      </select>
+      <button class="btn btn-small" onclick="loadJobs()">Apply</button>
+    </div>
+
+    <h3>Create Job Post</h3>
+    <input type="text" id="title" placeholder="Job Title">
+    <select id="stateSelect">
+      <option value="">Select State</option>
+    </select>
+    <select id="districtSelect">
+      <option value="">Select District</option>
+    </select>
+    <select id="workplace">
+      <option value="">Workplace</option>
+      <option value="remote">Remote</option>
+      <option value="onsite">Onsite</option>
+      <option value="hybrid">Hybrid</option>
+    </select>
+    <select id="tagSelector">
+      <option value="">Select Skill</option>
+    </select>
+    <button class="btn btn-small" id="addKeywordBtn">Add Keyword</button>
+    <div class="tag-container" id="selectedTags"></div>
+    <button class="btn" id="postJobBtn">Post Job</button>
+
+    <div id="jobList"></div>
+  </div>
+
+  <!-- Modal for Applicants List -->
+  <div class="modal" id="applicantsModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">×</span>
+      <h3>Applicants</h3>
+      <div id="applicantsContainer"></div>
+    </div>
+  </div>
+
+  <!-- Modal for Candidate Profile -->
+  <div class="modal" id="candidateModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeCandidateModal()">×</span>
+      <div id="candidateProfile"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc, doc, getDocs, getDoc, query, where, updateDoc, deleteDoc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDkh6B0e8A6uZrSxqqXDaRE9mnCOQMTHQM",
+      authDomain: "finna-52a34.firebaseapp.com",
+      projectId: "finna-52a34",
+      storageBucket: "finna-52a34.appspot.com",
+      messagingSenderId: "581244699731",
+      appId: "1:581244699731:web:f2947f4651cafbf766b2a6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let currentUser = null;
+    let selectedKeywords = [];
+
+    const tagSelector = document.getElementById("tagSelector");
+    const selectedTagsDiv = document.getElementById("selectedTags");
+    const stateSelect = document.getElementById("stateSelect");
+    const districtSelect = document.getElementById("districtSelect");
+    const addKeywordBtn = document.getElementById("addKeywordBtn");
+    const postJobBtn = document.getElementById("postJobBtn");
+
+    const locationData = {
+      "Andhra Pradesh": ["Alluri Sitharama Raju", "Anakapalli", "Anantapur", "Annamayya", "Bapatla", "Chittoor", "Dr. B.R. Ambedkar Konaseema", "East Godavari", "Eluru", "Guntur", "Kadapa", "Kakinada", "Krishna", "Kurnool", "Nandyal", "NTR", "Palnadu", "Parvathipuram Manyam", "Prakasam", "Sri Sathya Sai", "Srikakulam", "Tirupati", "Visakhapatnam", "Vizianagaram", "West Godavari"],
+      "Arunachal Pradesh": ["Anjaw", "Changlang", "Dibang Valley", "East Kameng", "East Siang", "Itanagar", "Kamle", "Kra Daadi", "Kurung Kumey", "Lepa Rada", "Lohit", "Longding", "Lower Dibang Valley", "Lower Siang", "Lower Subansiri", "Namsai", "Pakke-Kessang", "Papum Pare", "Shi-Yomi", "Siang", "Tawang", "Tirap", "Upper Siang", "Upper Subansiri", "West Kameng", "West Siang"],
+      "Assam": ["Bajali", "Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang", "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat", "Hailakandi", "Hojai", "Jorhat", "Kamrup", "Kamrup Metropolitan", "Karbi Anglong", "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari", "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tamulpur", "Tinsukia", "Udalguri", "West Karbi Anglong"],
+      "Bihar": ["Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar", "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur", "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger", "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"],
+      "Chhattisgarh": ["Balod", "Baloda Bazar", "Balrampur-Ramanujganj", "Bastar", "Bemetara", "Bijapur", "Bilaspur", "Dantewada", "Dhamtari", "Durg", "Gariaband", "Gaurela-Pendra-Marwahi", "Janjgir-Champa", "Jashpur", "Kabirdham", "Kanker", "Khairagarh-Chhuikhadan-Gandai", "Kondagaon", "Korba", "Korea", "Mahasamund", "Manendragarh-Chirmiri-Bharatpur", "Mohla-Manpur-Ambagarh Chowki", "Mungeli", "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sakti", "Sarangarh-Bilaigarh", "Sukma", "Surajpur", "Surguja"],
+      "Goa": ["North Goa", "South Goa"],
+      "Gujarat": ["Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha", "Bharuch", "Bhavnagar", "Botad", "Chhota Udaipur", "Dahod", "Dang", "Devbhoomi Dwarka", "Gandhinagar", "Gir Somnath", "Jamnagar", "Junagadh", "Kheda", "Kutch", "Mahisagar", "Mehsana", "Morbi", "Narmada", "Navsari", "Panchmahal", "Patan", "Porbandar", "Rajkot", "Sabarkantha", "Surat", "Surendranagar", "Tapi", "Vadodara", "Valsad"],
+      "Haryana": ["Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad", "Gurugram", "Hisar", "Jhajjar", "Jind", "Kaithal", "Karnal", "Kurukshetra", "Mahendragarh", "Nuh", "Palwal", "Panchkula", "Panipat", "Rewari", "Rohtak", "Sirsa", "Sonipat", "Yamunanagar"],
+      "Himachal Pradesh": ["Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur", "Kullu", "Lahaul and Spiti", "Mandi", "Shimla", "Sirmaur", "Solan", "Una"],
+      "Jharkhand": ["Bokaro", "Chatra", "Deoghar", "Dhanbad", "Dumka", "East Singhbhum", "Garhwa", "Giridih", "Godda", "Gumla", "Hazaribagh", "Jamtara", "Khunti", "Koderma", "Latehar", "Lohardaga", "Pakur", "Palamu", "Ramgarh", "Ranchi", "Sahibganj", "Seraikela Kharsawan", "Simdega", "West Singhbhum"],
+      "Karnataka": ["Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban", "Bidar", "Chamarajanagar", "Chikkaballapura", "Chikkamagaluru", "Chitradurga", "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal", "Mandya", "Mysuru", "Raichur", "Ramanagara", "Shivamogga", "Tumakuru", "Udupi", "Uttara Kannada", "Vijayanagara", "Vijayapura", "Yadgir"],
+      "Kerala": ["Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Kozhikode", "Malappuram", "Palakkad", "Pathanamthitta", "Thiruvananthapuram", "Thrissur", "Wayanad"],
+      "Madhya Pradesh": ["Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat", "Barwani", "Betul", "Bhind", "Bhopal", "Burhanpur", "Chhatarpur", "Chhindwara", "Damoh", "Datia", "Dewas", "Dhar", "Dindori", "Guna", "Gwalior", "Harda", "Hoshangabad", "Indore", "Jabalpur", "Jhabua", "Katni", "Khandwa", "Khargone", "Mandla", "Mandsaur", "Morena", "Narmadapuram", "Narsinghpur", "Neemuch", "Niwari", "Panna", "Raisen", "Rajgarh", "Ratlam", "Rewa", "Sagar", "Satna", "Sehore", "Seoni", "Shahdol", "Shajapur", "Sheopur", "Shivpuri", "Sidhi", "Singrauli", "Tikamgarh", "Ujjain", "Umaria", "Vidisha"],
+      "Maharashtra": ["Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara", "Buldhana", "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli", "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", "Nagpur", "Nanded", "Nandurbar", "Nashik", "Osmanabad", "Palghar", "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara", "Sindhudurg", "Solapur", "Thane", "Wardha", "Washim", "Yavatmal"],
+      "Manipur": ["Bishnupur", "Chandel", "Churachandpur", "Imphal East", "Imphal West", "Jiribam", "Kakching", "Kamjong", "Kangpokpi", "Noney", "Pherzawl", "Senapati", "Tamenglong", "Tengnoupal", "Thoubal", "Ukhrul"],
+      "Meghalaya": ["East Garo Hills", "East Jaintia Hills", "East Khasi Hills", "North Garo Hills", "Ri-Bhoi", "South Garo Hills", "South West Garo Hills", "South West Khasi Hills", "West Garo Hills", "West Jaintia Hills", "West Khasi Hills"],
+      "Mizoram": ["Aizawl", "Champhai", "Hnahthial", "Khawzawl", "Kolasib", "Lawngtlai", "Lunglei", "Mamit", "Saiha", "Saitual", "Serchhip"],
+      "Nagaland": ["Chumoukedima", "Dimapur", "Kiphire", "Kohima", "Longleng", "Mokokchung", "Mon", "Niuland", "Noklak", "Peren", "Phek", "Shamator", "Tseminyu", "Tuensang", "Wokha", "Zunheboto"],
+      "Odisha": ["Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak", "Boudh", "Cuttack", "Deogarh", "Dhenkanal", "Gajapati", "Ganjam", "Jagatsinghpur", "Jajpur", "Jharsuguda", "Kalahandi", "Kandhamal", "Kendrapara", "Kendujhar", "Khordha", "Koraput", "Malkangiri", "Mayurbhanj", "Nabarangpur", "Nayagarh", "Nuapada", "Puri", "Rayagada", "Sambalpur", "Subarnapur", "Sundargarh"],
+      "Punjab": ["Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka", "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", "Ludhiana", "Malerkotla", "Mansa", "Moga", "Muktsar", "Pathankot", "Patiala", "Rupnagar", "Sangrur", "SAS Nagar", "Shaheed Bhagat Singh Nagar", "Tarn Taran"],
+      "Rajasthan": ["Ajmer", "Alwar", "Anupgarh", "Balotra", "Banswara", "Baran", "Barmer", "Beawar", "Bharatpur", "Bhilwara", "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa", "Deeg", "Dholpur", "Dudu", "Dungarpur", "Ganganagar", "Hanumangarh", "Jaipur", "Jaisalmer", "Jalore", "Jhalawar", "Jhunjhunu", "Jodhpur", "Karauli", "Kekri", "Khairthal-Tijara", "Kota", "Nagaur", "Neem ka Thana", "Pali", "Phalodi", "Pratapgarh", "Rajsamand", "Salumbar", "Sanchore", "Sawai Madhopur", "Shahpura", "Sikar", "Sirohi", "Tonk", "Udaipur"],
+      "Sikkim": ["East Sikkim", "North Sikkim", "South Sikkim", "West Sikkim"],
+      "Tamil Nadu": ["Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakurichi", "Kancheepuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"],
+      "Telangana": ["Adilabad", "Bhadradri Kothagudem", "Hyderabad", "Jagtial", "Jangaon", "Jayashankar Bhupalpally", "Jogulamba Gadwal", "Kamareddy", "Karimnagar", "Khammam", "Komaram Bheem", "Mahabubabad", "Mahbubnagar", "Mancherial", "Medak", "Medchal-Malkajgiri", "Mulugu", "Nagarkurnool", "Nalgonda", "Narayanpet", "Nirmal", "Nizamabad", "Peddapalli", "Rajanna Sircilla", "Ranga Reddy", "Sangareddy", "Siddipet", "Suryapet", "Vikarabad", "Wanaparthy", "Warangal Rural", "Warangal Urban", "Yadadri Bhuvanagiri"],
+      "Tripura": ["Dhalai", "Gomati", "Khowai", "North Tripura", "Sepahijala", "South Tripura", "Unakoti", "West Tripura"],
+      "Uttar Pradesh": ["Agra", "Aligarh", "Ambedkar Nagar", "Amethi", "Amroha", "Auraiya", "Ayodhya", "Azamgarh", "Baghpat", "Bahraich", "Ballia", "Balrampur", "Banda", "Barabanki", "Bareilly", "Basti", "Bhadohi", "Bijnor", "Budaun", "Bulandshahr", "Chandauli", "Chitrakoot", "Deoria", "Etah", "Etawah", "Farrukhabad", "Fatehpur", "Firozabad", "Gautam Buddha Nagar", "Ghaziabad", "Ghazipur", "Gonda", "Gorakhpur", "Hamirpur", "Hapur", "Hardoi", "Hathras", "Jalaun", "Jaunpur", "Jhansi", "Kannauj", "Kanpur Dehat", "Kanpur Nagar", "Kasganj", "Kaushambi", "Kushinagar", "Lakhimpur Kheri", "Lalitpur", "Lucknow", "Maharajganj", "Mahoba", "Mainpuri", "Mathura", "Mau", "Meerut", "Mirzapur", "Moradabad", "Muzaffarnagar", "Pilibhit", "Pratapgarh", "Prayagraj", "Raebareli", "Rampur", "Saharanpur", "Sambhal", "Sant Kabir Nagar", "Shahjahanpur", "Shamli", "Shravasti", "Siddharthnagar", "Sitapur", "Sonbhadra", "Sultanpur", "Unnao", "Varanasi"],
+      "Uttarakhand": ["Almora", "Bageshwar", "Chamoli", "Champawat", "Dehradun", "Haridwar", "Nainital", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"],
+      "West Bengal": ["Alipurduar", "Bankura", "Birbhum", "Cooch Behar", "Dakshin Dinajpur", "Darjeeling", "Hooghly", "Howrah", "Jalpaiguri", "Jhargram", "Kalimpong", "Kolkata", "Malda", "Murshidabad", "Nadia", "North 24 Parganas", "Paschim Bardhaman", "Paschim Medinipur", "Purba Bardhaman", "Purba Medinipur", "Purulia", "South 24 Parganas", "Uttar Dinajpur"],
+      "Andaman and Nicobar Islands": ["Nicobar", "North and Middle Andaman", "South Andaman"],
+      "Chandigarh": ["Chandigarh"],
+      "Dadra and Nagar Haveli and Daman and Diu": ["Dadra and Nagar Haveli", "Daman", "Diu"],
+      "Delhi": ["Central Delhi", "East Delhi", "New Delhi", "North Delhi", "North East Delhi", "North West Delhi", "Shahdara", "South Delhi", "South East Delhi", "South West Delhi", "West Delhi"],
+      "Jammu and Kashmir": ["Anantnag", "Bandipora", "Baramulla", "Budgam", "Doda", "Ganderbal", "Jammu", "Kathua", "Kishtwar", "Kulgam", "Kupwara", "Poonch", "Pulwama", "Rajouri", "Ramban", "Reasi", "Samba", "Shopian", "Srinagar", "Udhampur"],
+      "Ladakh": ["Kargil", "Leh"],
+      "Lakshadweep": ["Lakshadweep"],
+      "Puducherry": ["Karaikal", "Mahe", "Puducherry", "Yanam"]
+    };
+
+    // Populate state dropdown
+    const states = Object.keys(locationData);
+    states.forEach(state => {
+      const option = document.createElement("option");
+      option.value = state;
+      option.textContent = state;
+      stateSelect.appendChild(option);
+    });
+
+    stateSelect.addEventListener("change", (e) => {
+      updateDistricts(e.target.value);
+    });
+
+    function updateDistricts(state) {
+      districtSelect.innerHTML = '<option value="">Select District</option>';
+      if (state && locationData[state]) {
+        locationData[state].forEach(district => {
+          const option = document.createElement("option");
+          option.value = district;
+          option.textContent = district;
+          districtSelect.appendChild(option);
+        });
+      }
+    }
+
+    function renderSelectedTags() {
+      selectedTagsDiv.innerHTML = selectedKeywords.map(tag =>
+        `<span class="tag">${tag}<span class="tag-remove" data-tag="${tag}">×</span></span>`
+      ).join('');
+      
+      document.querySelectorAll('.tag-remove').forEach(removeBtn => {
+        removeBtn.addEventListener('click', (e) => {
+          const tag = e.target.dataset.tag;
+          selectedKeywords = selectedKeywords.filter(t => t !== tag);
+          renderSelectedTags();
+        });
+      });
+    }
+
+    addKeywordBtn.addEventListener('click', () => {
+      const keyword = tagSelector.value;
+      if (keyword && !selectedKeywords.includes(keyword) && keyword !== "") {
+        selectedKeywords.push(keyword);
+        renderSelectedTags();
+        tagSelector.value = "";
+      }
+    });
+
+    async function createJob() {
+      const title = document.getElementById("title").value.trim();
+      const state = document.getElementById("stateSelect").value;
+      const location = document.getElementById("districtSelect").value;
+      const workplace = document.getElementById("workplace").value;
+
+      if (!title || !state || !location || !workplace || selectedKeywords.length === 0) {
+        alert("Please fill in all job fields and add at least one keyword.");
+        return;
+      }
+
+      const jobData = {
+        title,
+        state,
+        location,
+        workplace,
+        keywords: selectedKeywords,
+        postedBy: currentUser.uid,
+        createdAt: serverTimestamp(),
+        company: currentUser.organization || "Unknown Company"
+      };
+
+      try {
+        console.log("Posting job with data:", jobData);
+        const docRef = await addDoc(collection(db, "jobs"), jobData);
+        console.log("Job posted successfully with ID:", docRef.id);
+
+        alert("Job posted successfully!");
+        document.getElementById("title").value = "";
+        document.getElementById("stateSelect").value = "";
+        document.getElementById("districtSelect").innerHTML = '<option value="">Select District</option>';
+        document.getElementById("workplace").value = "";
+        selectedKeywords = [];
+        renderSelectedTags();
+        await loadJobs();
+      } catch (error) {
+        console.error("Error posting job:", error.message, error.code);
+        alert(`Failed to post job: ${error.message}`);
+      }
+    }
+
+    // Attach event listener to Post Job button
+    postJobBtn.addEventListener('click', createJob);
+
+    onAuthStateChanged(auth, async user => {
+      if (user) {
+        currentUser = user;
+        console.log("User authenticated:", user.email);
+        await loadOrgInfo();
+        await loadTags();
+        await loadJobs();
+      } else {
+        console.log("No user authenticated, redirecting to login...");
+        window.location.href = "recruiter-login.html";
+      }
+    });
+
+    async function loadOrgInfo() {
+      try {
+        console.log("Loading organization info for UID:", currentUser.uid);
+        const q = query(collection(db, "recruiters"), where("uid", "==", currentUser.uid));
+        const snapshot = await getDocs(q);
+        const orgInfoDiv = document.getElementById("orgInfo");
+
+        if (snapshot.empty) {
+          console.warn("No recruiter data found for UID:", currentUser.uid);
+          orgInfoDiv.innerHTML = "<p>Please complete your profile in the View/Edit Profile section.</p>";
+          return;
+        }
+
+        const doc = snapshot.docs[0];
+        const data = doc.data();
+        console.log("Recruiter data found:", data);
+
+        orgInfoDiv.innerHTML = `
+          <h3>${data.organization || "Your Company"}</h3>
+          <p><strong>Location:</strong> ${data.location || 'Not specified'}</p>
+          <p><strong>Email:</strong> ${data.email || 'Not specified'}</p>
+        `;
+      } catch (error) {
+        console.error("Error loading organization info:", error.message, error.code);
+        document.getElementById("orgInfo").innerHTML = "<p>Error loading organization info: " + error.message + "</p>";
+      }
+    }
+
+    async function loadTags() {
+      console.log("Attempting to load tags from Firestore...");
+      try {
+        const docRef = doc(db, "tags", "keywords");
+        console.log("Fetching document: tags/keywords");
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          console.log("Document found:", docSnap.data());
+          const data = docSnap.data();
+          const skills = data.skills || [];
+          
+          if (Array.isArray(skills) && skills.length > 0) {
+            console.log("Skills found:", skills);
+            tagSelector.innerHTML = '<option value="">Select Skill</option>';
+            skills.forEach(skill => {
+              if (typeof skill === 'string' && skill.trim() !== '') {
+                const option = document.createElement("option");
+                option.value = skill;
+                option.textContent = skill;
+                tagSelector.appendChild(option);
+              }
+            });
+            console.log("Tag selector populated with", skills.length, "skills");
+          } else {
+            console.warn("No skills array found or array is empty in document");
+            tagSelector.innerHTML = '<option value="">No skills available</option>';
+          }
+        } else {
+          console.warn("No 'keywords' document found in 'tags' collection!");
+          tagSelector.innerHTML = '<option value="">No skills available</option>';
+        }
+      } catch (error) {
+        console.error("Error fetching skills from Firestore:", error.message, error.code);
+        tagSelector.innerHTML = '<option value="">Error loading skills</option>';
+      }
+    }
+
+    async function loadJobs() {
+      try {
+        const jobList = document.getElementById("jobList");
+        jobList.innerHTML = "<p>Loading jobs...</p>";
+        const q = query(collection(db, "jobs"), where("postedBy", "==", currentUser.uid));
+        const snapshot = await getDocs(q);
+
+        let jobs = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          jobs.push({ id: doc.id, ...data, createdAt: data.createdAt ? data.createdAt.toDate() : new Date() });
+        });
+
+        const filter = document.getElementById("filterRemote").value;
+        const sort = document.getElementById("sortOrder").value;
+
+        if (filter === "remote") jobs = jobs.filter(j => j.workplace === "remote");
+        jobs.sort((a, b) => sort === "newest" ? b.createdAt - a.createdAt : a.createdAt - b.createdAt);
+
+        jobList.innerHTML = "";
+        if (jobs.length === 0) {
+          jobList.innerHTML = "<p>No jobs posted yet.</p>";
+          return;
+        }
+
+        jobs.forEach(job => {
+          const div = document.createElement("div");
+          div.className = "job-card";
+          div.innerHTML = `
+            <h3>${job.title}</h3>
+            <p><strong>State:</strong> ${job.state || 'N/A'}</p>
+            <p><strong>District:</strong> ${job.location || 'N/A'}</p>
+            <p><strong>Type:</strong> ${job.workplace}</p>
+            <div class="tag-container">${job.keywords.map(k => `<span class="tag">${k}</span>`).join('')}</div>
+            <div class="job-card-buttons">
+              <button class="btn btn-small" onclick="viewApplicants('${job.id}')">View Applicants</button>
+              <button class="btn btn-small" onclick="deleteJob('${job.id}')">Delete</button>
+            </div>
+          `;
+          jobList.appendChild(div);
+        });
+      } catch (error) {
+        console.error("Error loading jobs:", error.message, error.code);
+        document.getElementById("jobList").innerHTML = "<p>Error loading jobs: " + error.message + "</p>";
+      }
+    }
+
+    window.deleteJob = async function(jobId) {
+      if (confirm("Are you sure you want to delete this job?")) {
+        try {
+          await deleteDoc(doc(db, "jobs", jobId));
+          console.log("Job deleted:", jobId);
+          await loadJobs();
+        } catch (error) {
+          console.error("Error deleting job:", error.message, error.code);
+          alert("Failed to delete job: " + error.message);
+        }
+      }
+    };
+
+    window.viewApplicants = async function(jobId) {
+      const modal = document.getElementById("applicantsModal");
+      const container = document.getElementById("applicantsContainer");
+      container.innerHTML = "Loading applicants...";
+      modal.dataset.jobId = jobId;
+
+      try {
+        const q = query(collection(db, "applications"), where("jobId", "==", jobId));
+        const snapshot = await getDocs(q);
+
+        container.innerHTML = "";
+        
+        if (snapshot.empty) {
+          container.innerHTML = "<p>No applicants yet</p>";
+        } else {
+          for (const docSnap of snapshot.docs) {
+            const app = docSnap.data();
+            const seekerQuery = query(collection(db, "seekers"), where("email", "==", app.seekerEmail));
+            const seekerSnapshot = await getDocs(seekerQuery);
+            
+            if (!seekerSnapshot.empty) {
+              const seeker = seekerSnapshot.docs[0].data();
+              const appliedDate = app.appliedAt ? new Date(app.appliedAt.toDate()).toLocaleDateString() : 'N/A';
+              const div = document.createElement("div");
+              div.className = "job-card";
+              div.innerHTML = `
+                <div class="profile-header">
+                  <div class="profile-name">${seeker.name || 'No name'}</div>
+                  <span class="status-badge status-${app.status || 'pending'}">${app.status || 'pending'}</span>
+                </div>
+                <p><strong>Email:</strong> ${seeker.email}</p>
+                <p><strong>Applied:</strong> ${appliedDate}</p>
+                <div class="job-card-buttons">
+                  <button class="btn btn-small" onclick="viewCandidateProfile('${seeker.email}', '${docSnap.id}')">View Full Profile</button>
+                </div>
+              `;
+              container.appendChild(div);
+            }
+          }
+        }
+        modal.style.display = "flex";
+      } catch (error) {
+        console.error("Error loading applicants:", error.message, error.code);
+        container.innerHTML = "Error loading applicants: " + error.message;
+      }
+    };
+
+    window.viewCandidateProfile = async function(seekerEmail, applicationId) {
+      const modal = document.getElementById("candidateModal");
+      const profileContainer = document.getElementById("candidateProfile");
+      profileContainer.innerHTML = "Loading profile...";
+
+      try {
+        const seekerQuery = query(collection(db, "seekers"), where("email", "==", seekerEmail));
+        const seekerSnapshot = await getDocs(seekerQuery);
+        
+        if (seekerSnapshot.empty) {
+          profileContainer.innerHTML = "Candidate profile not found";
+          return;
+        }
+
+        const seekerData = seekerSnapshot.docs[0].data();
+        
+        let applicationData = {};
+        if (applicationId) {
+          const appDoc = await getDoc(doc(db, "applications", applicationId));
+          if (appDoc.exists()) {
+            applicationData = appDoc.data();
+          }
+        }
+
+        let locationDisplay = '';
+        if (seekerData.locationPreference === 'district') {
+          locationDisplay = `${seekerData.district}, ${seekerData.state}`;
+        } else if (seekerData.locationPreference === 'state') {
+          locationDisplay = seekerData.state;
+        } else if (seekerData.locationPreference === 'multipleStates') {
+          locationDisplay = seekerData.states ? seekerData.states.join(', ') : 'Multiple States';
+        }
+
+        profileContainer.innerHTML = `
+          <div class="profile-section">
+            <div class="profile-header">
+              <div class="profile-name">${seekerData.name || 'No name provided'}</div>
+              <span class="status-badge status-${applicationData.status || 'pending'}">
+                ${applicationData.status || 'pending'}
+              </span>
+            </div>
+            <div class="profile-details">
+              <div class="detail-item">
+                <div class="detail-label">Email:</div>
+                <div>${seekerData.email || 'Not provided'}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Experience:</div>
+                <div>${seekerData.experience || 'Not specified'}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Location Preference:</div>
+                <div>${locationDisplay || 'Not provided'}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Work Preference:</div>
+                <div>${seekerData.workplace || 'Not specified'}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-section">
+            <h4>Skills</h4>
+            <div class="tag-container">${seekerData.skills ? seekerData.skills.map(skill => `<span class="tag">${skill}</span>`).join('') : 'No skills listed'}</div>
+          </div>
+
+          ${seekerData.resumeURL ? `
+          <div class="profile-section">
+            <h4>Resume</h4>
+            <a href="${seekerData.resumeURL}" class="resume-link" target="_blank">View Resume</a>
+          </div>
+          ` : ''}
+
+          <div class="action-buttons">
+            <button class="action-button accept" onclick="updateApplicationStatus('${applicationId}', 'accepted')">Accept</button>
+            <button class="action-button reject" onclick="updateApplicationStatus('${applicationId}', 'rejected')">Reject</button>
+            <button class="action-button message" onclick="messageCandidate('${seekerData.email}')">Message</button>
+          </div>
+        `;
+
+        modal.style.display = "flex";
+      } catch (error) {
+        console.error("Error loading candidate profile:", error.message, error.code);
+        profileContainer.innerHTML = "Error loading profile: " + error.message;
+      }
+    };
+
+    window.updateApplicationStatus = async function(applicationId, status) {
+      if (!applicationId) return;
+      
+      try {
+        await updateDoc(doc(db, "applications", applicationId), {
+          status: status,
+          updatedAt: serverTimestamp()
+        });
+        alert(`Application ${status} successfully!`);
+        closeCandidateModal();
+        await viewApplicants(document.querySelector('#applicantsModal').dataset.jobId);
+      } catch (error) {
+        console.error("Error updating application:", error.message, error.code);
+        alert("Failed to update application status: " + error.message);
+      }
+    };
+
+    window.messageCandidate = function(email) {
+      alert(`Messaging feature would open for: ${email}`);
+    };
+
+    window.closeModal = function() {
+      document.getElementById("applicantsModal").style.display = "none";
+    };
+
+    window.closeCandidateModal = function() {
+      document.getElementById("candidateModal").style.display = "none";
+    };
+
+    // Initialize Particles.js
+    if (window.particlesJS) {
+      particlesJS("particles-js", {
+        particles: {
+          number: { value: 50 },
+          color: { value: "#1a1a1a" },
+          shape: { type: "circle" },
+          opacity: { value: 0.4 },
+          size: { value: 2.5 },
+          move: { 
+            enable: true, 
+            speed: 0.8,
+            direction: "none",
+            random: true,
+            straight: false,
+            out_mode: "out"
+          },
+          line_linked: {
+            enable: true,
+            distance: 120,
+            color: "#1a1a1a",
+            opacity: 0.1,
+            width: 1
+          }
+        },
+        interactivity: {
+          events: {
+            onhover: { enable: true, mode: "repulse" }
+          }
+        }
+      });
+    } else {
+      console.error("Particles.js not loaded.");
+    }
+  </script>
+</body>
+</html>

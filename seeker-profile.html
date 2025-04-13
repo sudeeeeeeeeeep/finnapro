@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Finna – Seeker Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+  <style>
+    :root {
+      --black: #1a1a1a;
+      --dark-gray: #333333;
+      --gray: #666666;
+      --light-gray: #e5e5e5;
+      --white: #ffffff;
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+      --shadow-md: 0 6px 12px rgba(0,0,0,0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: var(--white);
+    }
+
+    .container {
+      background: var(--white);
+      padding: 40px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    h2:after {
+      content: '';
+      width: 40px;
+      height: 3px;
+      background: var(--black);
+      position: absolute;
+      bottom: -0.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px 16px;
+      margin: 12px 0;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--light-gray);
+      font-size: 1rem;
+      background: var(--white);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--black);
+      box-shadow: var(--shadow-sm);
+    }
+
+    select {
+      appearance: none;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="%23666666" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 16px center;
+      background-size: 12px;
+    }
+
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .tag {
+      padding: 8px 12px;
+      background: var(--light-gray);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .tag:hover {
+      background: #d1d5db;
+    }
+
+    .tag.selected {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+    }
+
+    .btn:hover {
+      background: var(--dark-gray);
+      transform: translateY(-2px);
+    }
+
+    #resumeInfo {
+      margin: 12px 0;
+      font-size: 0.9rem;
+      color: var(--gray);
+    }
+
+    iframe {
+      width: 100%;
+      height: 400px;
+      border: 1px solid var(--light-gray);
+      border-radius: var(--radius-sm);
+      margin-top: 12px;
+    }
+
+    strong {
+      font-weight: 600;
+      color: var(--black);
+      display: block;
+      margin: 12px 0 8px;
+    }
+
+    .location-details {
+      display: none;
+    }
+
+    .multi-state-container {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--light-gray);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      margin: 12px 0;
+      text-align: left;
+    }
+
+    .multi-state-container label {
+      display: block;
+      padding: 8px 0;
+      cursor: pointer;
+    }
+
+    .multi-state-container input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+        max-width: 340px;
+      }
+
+      h2 {
+        font-size: 1.75rem;
+      }
+
+      input, select {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+      }
+
+      .btn {
+        padding: 12px;
+        font-size: 0.95rem;
+      }
+
+      .tag {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+      }
+
+      iframe {
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <h2>Complete Your Seeker Profile</h2>
+    <input type="text" id="name" placeholder="Full Name" />
+    <input type="text" id="experience" placeholder="Experience (e.g., 2 years)" />
+    <select id="workplace">
+      <option value="">Select Workplace Preference</option>
+      <option value="remote">Remote</option>
+      <option value="onsite">Onsite</option>
+      <option value="hybrid">Hybrid</option>
+    </select>
+    <select id="locationPreference">
+      <option value="">Select Location Preference</option>
+      <option value="district">Within My District</option>
+      <option value="state">Within My State</option>
+      <option value="multipleStates">Multiple States</option>
+    </select>
+
+    <div id="locationDetails" class="location-details">
+      <select id="stateSelect" class="state-select">
+        <option value="">Select State</option>
+      </select>
+      <select id="districtSelect" class="district-select" style="display:none;">
+        <option value="">Select District</option>
+      </select>
+      <div id="multiStateSelect" class="multi-state-container" style="display:none;"></div>
+    </div>
+
+    <strong>Select Your Skills:</strong>
+    <div class="tag-container" id="tagContainer"></div>
+
+    <div>
+      <strong>Upload Resume (PDF, Max 2MB):</strong>
+      <input type="file" id="resumeInput" accept="application/pdf" />
+      <div id="resumeInfo"></div>
+      <iframe id="resumePreview" style="display:none;"></iframe>
+    </div>
+
+    <button class="btn" onclick="saveSeekerProfile()">Save Profile</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDkh6B0e8A6uZrSxqqXDaRE9mnCOQMTHQM",
+      authDomain: "finna-52a34.firebaseapp.com",
+      projectId: "finna-52a34",
+      storageBucket: "finna-52a34.appspot.com",
+      messagingSenderId: "581244699731",
+      appId: "1:581244699731:web:f2947f4651cafbf766b2a6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    let currentUser = null;
+    let selectedTags = [];
+    let resumeFile = null;
+
+    const tagContainer = document.getElementById("tagContainer");
+    const locationPreference = document.getElementById("locationPreference");
+    const locationDetails = document.getElementById("locationDetails");
+    const stateSelect = document.getElementById("stateSelect");
+    const districtSelect = document.getElementById("districtSelect");
+    const multiStateSelect = document.getElementById("multiStateSelect");
+
+    // Comprehensive list of states, UTs, and districts (as of April 2025)
+    const locationData = {
+      "Andhra Pradesh": ["Alluri Sitharama Raju", "Anakapalli", "Anantapur", "Annamayya", "Bapatla", "Chittoor", "Dr. B.R. Ambedkar Konaseema", "East Godavari", "Eluru", "Guntur", "Kadapa", "Kakinada", "Krishna", "Kurnool", "Nandyal", "NTR", "Palnadu", "Parvathipuram Manyam", "Prakasam", "Sri Sathya Sai", "Srikakulam", "Tirupati", "Visakhapatnam", "Vizianagaram", "West Godavari"],
+      "Arunachal Pradesh": ["Anjaw", "Changlang", "Dibang Valley", "East Kameng", "East Siang", "Itanagar", "Kamle", "Kra Daadi", "Kurung Kumey", "Lepa Rada", "Lohit", "Longding", "Lower Dibang Valley", "Lower Siang", "Lower Subansiri", "Namsai", "Pakke-Kessang", "Papum Pare", "Shi-Yomi", "Siang", "Tawang", "Tirap", "Upper Siang", "Upper Subansiri", "West Kameng", "West Siang"],
+      "Assam": ["Bajali", "Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang", "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat", "Hailakandi", "Hojai", "Jorhat", "Kamrup", "Kamrup Metropolitan", "Karbi Anglong", "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari", "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tamulpur", "Tinsukia", "Udalguri", "West Karbi Anglong"],
+      "Bihar": ["Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar", "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur", "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger", "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"],
+      "Chhattisgarh": ["Balod", "Baloda Bazar", "Balrampur-Ramanujganj", "Bastar", "Bemetara", "Bijapur", "Bilaspur", "Dantewada", "Dhamtari", "Durg", "Gariaband", "Gaurela-Pendra-Marwahi", "Janjgir-Champa", "Jashpur", "Kabirdham", "Kanker", "Khairagarh-Chhuikhadan-Gandai", "Kondagaon", "Korba", "Korea", "Mahasamund", "Manendragarh-Chirmiri-Bharatpur", "Mohla-Manpur-Ambagarh Chowki", "Mungeli", "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sakti", "Sarangarh-Bilaigarh", "Sukma", "Surajpur", "Surguja"],
+      "Goa": ["North Goa", "South Goa"],
+      "Gujarat": ["Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha", "Bharuch", "Bhavnagar", "Botad", "Chhota Udaipur", "Dahod", "Dang", "Devbhoomi Dwarka", "Gandhinagar", "Gir Somnath", "Jamnagar", "Junagadh", "Kheda", "Kutch", "Mahisagar", "Mehsana", "Morbi", "Narmada", "Navsari", "Panchmahal", "Patan", "Porbandar", "Rajkot", "Sabarkantha", "Surat", "Surendranagar", "Tapi", "Vadodara", "Valsad"],
+      "Haryana": ["Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad", "Gurugram", "Hisar", "Jhajjar", "Jind", "Kaithal", "Karnal", "Kurukshetra", "Mahendragarh", "Nuh", "Palwal", "Panchkula", "Panipat", "Rewari", "Rohtak", "Sirsa", "Sonipat", "Yamunanagar"],
+      "Himachal Pradesh": ["Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur", "Kullu", "Lahaul and Spiti", "Mandi", "Shimla", "Sirmaur", "Solan", "Una"],
+      "Jharkhand": ["Bokaro", "Chatra", "Deoghar", "Dhanbad", "Dumka", "East Singhbhum", "Garhwa", "Giridih", "Godda", "Gumla", "Hazaribagh", "Jamtara", "Khunti", "Koderma", "Latehar", "Lohardaga", "Pakur", "Palamu", "Ramgarh", "Ranchi", "Sahibganj", "Seraikela Kharsawan", "Simdega", "West Singhbhum"],
+      "Karnataka": ["Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban", "Bidar", "Chamarajanagar", "Chikkaballapura", "Chikkamagaluru", "Chitradurga", "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal", "Mandya", "Mysuru", "Raichur", "Ramanagara", "Shivamogga", "Tumakuru", "Udupi", "Uttara Kannada", "Vijayanagara", "Vijayapura", "Yadgir"],
+      "Kerala": ["Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Kozhikode", "Malappuram", "Palakkad", "Pathanamthitta", "Thiruvananthapuram", "Thrissur", "Wayanad"],
+      "Madhya Pradesh": ["Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat", "Barwani", "Betul", "Bhind", "Bhopal", "Burhanpur", "Chhatarpur", "Chhindwara", "Damoh", "Datia", "Dewas", "Dhar", "Dindori", "Guna", "Gwalior", "Harda", "Hoshangabad", "Indore", "Jabalpur", "Jhabua", "Katni", "Khandwa", "Khargone", "Mandla", "Mandsaur", "Morena", "Narmadapuram", "Narsinghpur", "Neemuch", "Niwari", "Panna", "Raisen", "Rajgarh", "Ratlam", "Rewa", "Sagar", "Satna", "Sehore", "Seoni", "Shahdol", "Shajapur", "Sheopur", "Shivpuri", "Sidhi", "Singrauli", "Tikamgarh", "Ujjain", "Umaria", "Vidisha"],
+      "Maharashtra": ["Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara", "Buldhana", "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli", "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", "Nagpur", "Nanded", "Nandurbar", "Nashik", "Osmanabad", "Palghar", "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara", "Sindhudurg", "Solapur", "Thane", "Wardha", "Washim", "Yavatmal"],
+      "Manipur": ["Bishnupur", "Chandel", "Churachandpur", "Imphal East", "Imphal West", "Jiribam", "Kakching", "Kamjong", "Kangpokpi", "Noney", "Pherzawl", "Senapati", "Tamenglong", "Tengnoupal", "Thoubal", "Ukhrul"],
+      "Meghalaya": ["East Garo Hills", "East Jaintia Hills", "East Khasi Hills", "North Garo Hills", "Ri-Bhoi", "South Garo Hills", "South West Garo Hills", "South West Khasi Hills", "West Garo Hills", "West Jaintia Hills", "West Khasi Hills"],
+      "Mizoram": ["Aizawl", "Champhai", "Hnahthial", "Khawzawl", "Kolasib", "Lawngtlai", "Lunglei", "Mamit", "Saiha", "Saitual", "Serchhip"],
+      "Nagaland": ["Chumoukedima", "Dimapur", "Kiphire", "Kohima", "Longleng", "Mokokchung", "Mon", "Niuland", "Noklak", "Peren", "Phek", "Shamator", "Tseminyu", "Tuensang", "Wokha", "Zunheboto"],
+      "Odisha": ["Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak", "Boudh", "Cuttack", "Deogarh", "Dhenkanal", "Gajapati", "Ganjam", "Jagatsinghpur", "Jajpur", "Jharsuguda", "Kalahandi", "Kandhamal", "Kendrapara", "Kendujhar", "Khordha", "Koraput", "Malkangiri", "Mayurbhanj", "Nabarangpur", "Nayagarh", "Nuapada", "Puri", "Rayagada", "Sambalpur", "Subarnapur", "Sundargarh"],
+      "Punjab": ["Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka", "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", "Ludhiana", "Malerkotla", "Mansa", "Moga", "Muktsar", "Pathankot", "Patiala", "Rupnagar", "Sangrur", "SAS Nagar", "Shaheed Bhagat Singh Nagar", "Tarn Taran"],
+      "Rajasthan": ["Ajmer", "Alwar", "Anupgarh", "Balotra", "Banswara", "Baran", "Barmer", "Beawar", "Bharatpur", "Bhilwara", "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa", "Deeg", "Dholpur", "Dudu", "Dungarpur", "Ganganagar", "Hanumangarh", "Jaipur", "Jaisalmer", "Jalore", "Jhalawar", "Jhunjhunu", "Jodhpur", "Karauli", "Kekri", "Khairthal-Tijara", "Kota", "Nagaur", "Neem ka Thana", "Pali", "Phalodi", "Pratapgarh", "Rajsamand", "Salumbar", "Sanchore", "Sawai Madhopur", "Shahpura", "Sikar", "Sirohi", "Tonk", "Udaipur"],
+      "Sikkim": ["East Sikkim", "North Sikkim", "South Sikkim", "West Sikkim"],
+      "Tamil Nadu": ["Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakurichi", "Kancheepuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"],
+      "Telangana": ["Adilabad", "Bhadradri Kothagudem", "Hyderabad", "Jagtial", "Jangaon", "Jayashankar Bhupalpally", "Jogulamba Gadwal", "Kamareddy", "Karimnagar", "Khammam", "Komaram Bheem", "Mahabubabad", "Mahbubnagar", "Mancherial", "Medak", "Medchal-Malkajgiri", "Mulugu", "Nagarkurnool", "Nalgonda", "Narayanpet", "Nirmal", "Nizamabad", "Peddapalli", "Rajanna Sircilla", "Ranga Reddy", "Sangareddy", "Siddipet", "Suryapet", "Vikarabad", "Wanaparthy", "Warangal Rural", "Warangal Urban", "Yadadri Bhuvanagiri"],
+      "Tripura": ["Dhalai", "Gomati", "Khowai", "North Tripura", "Sepahijala", "South Tripura", "Unakoti", "West Tripura"],
+      "Uttar Pradesh": ["Agra", "Aligarh", "Ambedkar Nagar", "Amethi", "Amroha", "Auraiya", "Ayodhya", "Azamgarh", "Baghpat", "Bahraich", "Ballia", "Balrampur", "Banda", "Barabanki", "Bareilly", "Basti", "Bhadohi", "Bijnor", "Budaun", "Bulandshahr", "Chandauli", "Chitrakoot", "Deoria", "Etah", "Etawah", "Farrukhabad", "Fatehpur", "Firozabad", "Gautam Buddha Nagar", "Ghaziabad", "Ghazipur", "Gonda", "Gorakhpur", "Hamirpur", "Hapur", "Hardoi", "Hathras", "Jalaun", "Jaunpur", "Jhansi", "Kannauj", "Kanpur Dehat", "Kanpur Nagar", "Kasganj", "Kaushambi", "Kushinagar", "Lakhimpur Kheri", "Lalitpur", "Lucknow", "Maharajganj", "Mahoba", "Mainpuri", "Mathura", "Mau", "Meerut", "Mirzapur", "Moradabad", "Muzaffarnagar", "Pilibhit", "Pratapgarh", "Prayagraj", "Raebareli", "Rampur", "Saharanpur", "Sambhal", "Sant Kabir Nagar", "Shahjahanpur", "Shamli", "Shravasti", "Siddharthnagar", "Sitapur", "Sonbhadra", "Sultanpur", "Unnao", "Varanasi"],
+      "Uttarakhand": ["Almora", "Bageshwar", "Chamoli", "Champawat", "Dehradun", "Haridwar", "Nainital", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"],
+      "West Bengal": ["Alipurduar", "Bankura", "Birbhum", "Cooch Behar", "Dakshin Dinajpur", "Darjeeling", "Hooghly", "Howrah", "Jalpaiguri", "Jhargram", "Kalimpong", "Kolkata", "Malda", "Murshidabad", "Nadia", "North 24 Parganas", "Paschim Bardhaman", "Paschim Medinipur", "Purba Bardhaman", "Purba Medinipur", "Purulia", "South 24 Parganas", "Uttar Dinajpur"],
+      "Andaman and Nicobar Islands": ["Nicobar", "North and Middle Andaman", "South Andaman"],
+      "Chandigarh": ["Chandigarh"],
+      "Dadra and Nagar Haveli and Daman and Diu": ["Dadra and Nagar Haveli", "Daman", "Diu"],
+      "Delhi": ["Central Delhi", "East Delhi", "New Delhi", "North Delhi", "North East Delhi", "North West Delhi", "Shahdara", "South Delhi", "South East Delhi", "South West Delhi", "West Delhi"],
+      "Jammu and Kashmir": ["Anantnag", "Bandipora", "Baramulla", "Budgam", "Doda", "Ganderbal", "Jammu", "Kathua", "Kishtwar", "Kulgam", "Kupwara", "Poonch", "Pulwama", "Rajouri", "Ramban", "Reasi", "Samba", "Shopian", "Srinagar", "Udhampur"],
+      "Ladakh": ["Kargil", "Leh"],
+      "Lakshadweep": ["Lakshadweep"],
+      "Puducherry": ["Karaikal", "Mahe", "Puducherry", "Yanam"]
+    };
+
+    // Populate state dropdown
+    const states = Object.keys(locationData);
+    states.forEach(state => {
+      const option = document.createElement("option");
+      option.value = state;
+      option.textContent = state;
+      stateSelect.appendChild(option);
+    });
+
+    // Populate multi-state checkboxes
+    states.forEach(state => {
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.value = state;
+      checkbox.name = "multiState";
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(state));
+      multiStateSelect.appendChild(label);
+    });
+
+    async function loadTags() {
+      try {
+        const docSnap = await getDoc(doc(db, "tags", "keywords"));
+        if (docSnap.exists()) {
+          const tags = docSnap.data().skills;
+          tags.forEach(tagName => {
+            const tag = document.createElement("div");
+            tag.classList.add("tag");
+            tag.textContent = tagName;
+            tag.onclick = () => {
+              tag.classList.toggle("selected");
+              if (selectedTags.includes(tagName)) {
+                selectedTags = selectedTags.filter(t => t !== tagName);
+              } else {
+                selectedTags.push(tagName);
+              }
+            };
+            tagContainer.appendChild(tag);
+          });
+        } else {
+          console.error("⚠️ Tags document not found");
+        }
+      } catch (error) {
+        console.error("Error loading tags:", error);
+      }
+    }
+
+    async function loadProfile(uid) {
+      try {
+        const docRef = doc(db, "seekers", uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          document.getElementById('name').value = data.name || '';
+          document.getElementById('experience').value = data.experience || '';
+          document.getElementById('workplace').value = data.workplace || '';
+          document.getElementById('locationPreference').value = data.locationPreference || '';
+          
+          if (data.locationPreference) {
+            locationDetails.style.display = "block";
+            if (data.locationPreference === "district") {
+              stateSelect.style.display = "block";
+              districtSelect.style.display = "block";
+              multiStateSelect.style.display = "none";
+              stateSelect.value = data.state || '';
+              updateDistricts(data.state);
+              districtSelect.value = data.district || '';
+            } else if (data.locationPreference === "state") {
+              stateSelect.style.display = "block";
+              districtSelect.style.display = "none";
+              multiStateSelect.style.display = "none";
+              stateSelect.value = data.state || '';
+            } else if (data.locationPreference === "multipleStates") {
+              stateSelect.style.display = "none";
+              districtSelect.style.display = "none";
+              multiStateSelect.style.display = "block";
+              const selectedStates = data.states || [];
+              document.querySelectorAll('#multiStateSelect input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = selectedStates.includes(checkbox.value);
+              });
+            }
+          }
+
+          selectedTags = data.skills || [];
+          setTimeout(() => {
+            document.querySelectorAll('.tag').forEach(tagEl => {
+              if (selectedTags.includes(tagEl.textContent)) {
+                tagEl.classList.add('selected');
+              }
+            });
+          }, 500);
+
+          if (data.resumeURL) {
+            document.getElementById("resumePreview").style.display = "block";
+            document.getElementById("resumePreview").src = data.resumeURL;
+            document.getElementById("resumeInfo").innerText = `Resume uploaded.`;
+          }
+        }
+      } catch (error) {
+        console.error("Error loading profile:", error);
+      }
+    }
+
+    document.getElementById("resumeInput").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      const info = document.getElementById("resumeInfo");
+      const preview = document.getElementById("resumePreview");
+
+      if (!file) return;
+
+      if (file.type !== "application/pdf") {
+        alert("Only PDF files are allowed.");
+        e.target.value = "";
+        return;
+      }
+
+      if (file.size > 2 * 1024 * 1024) {
+        alert("File size exceeds 2MB limit.");
+        e.target.value = "";
+        return;
+      }
+
+      resumeFile = file;
+      info.innerText = `Selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+      preview.style.display = "block";
+      preview.src = URL.createObjectURL(file);
+    });
+
+    locationPreference.addEventListener("change", (e) => {
+      const value = e.target.value;
+      locationDetails.style.display = value ? "block" : "none";
+      stateSelect.style.display = "none";
+      districtSelect.style.display = "none";
+      multiStateSelect.style.display = "none";
+
+      if (value === "district") {
+        stateSelect.style.display = "block";
+        districtSelect.style.display = "block";
+      } else if (value === "state") {
+        stateSelect.style.display = "block";
+      } else if (value === "multipleStates") {
+        multiStateSelect.style.display = "block";
+      }
+    });
+
+    stateSelect.addEventListener("change", (e) => {
+      if (locationPreference.value === "district") {
+        updateDistricts(e.target.value);
+      }
+    });
+
+    function updateDistricts(state) {
+      districtSelect.innerHTML = '<option value="">Select District</option>';
+      if (state && locationData[state]) {
+        locationData[state].forEach(district => {
+          const option = document.createElement("option");
+          option.value = district;
+          option.textContent = district;
+          districtSelect.appendChild(option);
+        });
+      }
+    }
+
+    async function saveSeekerProfile() {
+      const name = document.getElementById('name').value.trim();
+      const experience = document.getElementById('experience').value.trim();
+      const workplace = document.getElementById('workplace').value;
+      const locationPreference = document.getElementById('locationPreference').value;
+      const state = stateSelect.value;
+      const district = districtSelect.value;
+      const selectedStates = Array.from(document.querySelectorAll('#multiStateSelect input[type="checkbox"]:checked')).map(cb => cb.value);
+
+      if (!currentUser) {
+        alert("❌ Not authenticated");
+        return;
+      }
+
+      if (!name || !experience || !workplace || !locationPreference || 
+          (locationPreference === "district" && (!state || !district)) ||
+          (locationPreference === "state" && !state) ||
+          (locationPreference === "multipleStates" && selectedStates.length === 0) ||
+          selectedTags.length === 0) {
+        alert("Please fill in all fields and select at least one skill.");
+        return;
+      }
+
+      try {
+        let resumeURL = "";
+        const existingDoc = await getDoc(doc(db, "seekers", currentUser.uid));
+        if (existingDoc.exists()) {
+          resumeURL = existingDoc.data().resumeURL || "";
+        }
+
+        if (resumeFile) {
+          const storageRef = ref(storage, `resumes/${currentUser.uid}.pdf`);
+          await uploadBytes(storageRef, resumeFile);
+          resumeURL = await getDownloadURL(storageRef);
+        }
+
+        const seekerData = {
+          uid: currentUser.uid,
+          name,
+          email: currentUser.email,
+          experience,
+          workplace,
+          locationPreference,
+          ...(locationPreference === "district" && { state, district }),
+          ...(locationPreference === "state" && { state }),
+          ...(locationPreference === "multipleStates" && { states: selectedStates }),
+          skills: selectedTags,
+          resumeURL,
+          lastUpdated: new Date()
+        };
+
+        await setDoc(doc(db, "seekers", currentUser.uid), seekerData, { merge: true });
+        alert("✅ Profile saved successfully!");
+        window.location.href = "seeker.html"; // Changed from swipe-jobs.html to seeker.html
+      } catch (err) {
+        console.error("Error saving profile:", err);
+        alert("❌ Error saving profile: " + err.message);
+      }
+    }
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        currentUser = user;
+        loadTags().then(() => loadProfile(user.uid));
+      } else {
+        alert("Please log in to continue.");
+        window.location.href = "seeker-login.html";
+      }
+    });
+
+    window.saveSeekerProfile = saveSeekerProfile;
+
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 50 },
+        color: { value: "#1a1a1a" },
+        shape: { type: "circle" },
+        opacity: { value: 0.4 },
+        size: { value: 2.5 },
+        move: { 
+          enable: true, 
+          speed: 0.8,
+          direction: "none",
+          random: true,
+          straight: false,
+          out_mode: "out"
+        },
+        line_linked: {
+          enable: true,
+          distance: 120,
+          color: "#1a1a1a",
+          opacity: 0.1,
+          width: 1
+        }
+      },
+      interactivity: {
+        events: {
+          onhover: { enable: true, mode: "repulse" }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

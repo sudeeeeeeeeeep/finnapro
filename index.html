@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Finna – Modern Job Matching</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Swipe. Match. Work. Finna is the most modern job discovery platform for professionals and recruiters.">
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+  <style>
+    :root {
+      --black: #1a1a1a;
+      --dark-gray: #333333;
+      --gray: #666666;
+      --light-gray: #e5e5e5;
+      --white: #ffffff;
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+      --shadow-md: 0 6px 12px rgba(0,0,0,0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: var(--white);
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+      z-index: 999;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 280px;
+      height: 100%;
+      background: var(--white);
+      box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+      transition: left 0.3s ease-in-out;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .sidebar .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--black);
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: transform 0.2s ease;
+    }
+
+    .sidebar .close-btn:hover {
+      transform: rotate(90deg);
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 2rem 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .sidebar ul li {
+      margin: 1.5rem 0;
+    }
+
+    .sidebar ul li a {
+      display: block;
+      padding: 0.75rem 1rem;
+      color: var(--black);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+    }
+
+    .sidebar ul li a:hover {
+      background: var(--light-gray);
+      color: var(--black);
+    }
+
+    .sidebar ul li a:active {
+      transform: scale(0.95);
+    }
+
+    .header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: var(--white);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      z-index: 998;
+      transition: all 0.3s ease;
+    }
+
+    .header.nav-scrolled {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .menu-toggle {
+      font-size: 1.8rem;
+      color: var(--black);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0.5rem;
+      transition: transform 0.2s ease;
+    }
+
+    .menu-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--black);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    .nav-desktop {
+      display: none;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem 1.5rem;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--black);
+    }
+
+    #typewriter {
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      font-weight: 400;
+      color: var(--gray);
+      min-height: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .illustration {
+      width: clamp(200px, 40vw, 300px);
+      margin-bottom: 2rem;
+      animation: float 4s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .cta {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .box {
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: var(--radius-md);
+      width: 100%;
+      max-width: 280px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--light-gray);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .box:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .box h2 {
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-seeker {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .btn-seeker:hover {
+      background: var(--dark-gray);
+    }
+
+    .btn-recruiter {
+      background: var(--light-gray);
+      color: var(--black);
+    }
+
+    .btn-recruiter:hover {
+      background: #d1d5db;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--gray);
+      color: var(--gray);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--black);
+      color: var(--black);
+    }
+
+    section {
+      padding: 5rem 1.5rem;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      font-weight: 700;
+      margin-bottom: 3rem;
+      color: var(--black);
+      position: relative;
+    }
+
+    .section-title:after {
+      content: '';
+      width: 50px;
+      height: 3px;
+      background: var(--black);
+      position: absolute;
+      bottom: -1rem;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      border-top: 4px solid var(--black);
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--black);
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card p {
+      color: var(--gray);
+    }
+
+    .testimonials {
+      background: var(--light-gray);
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .testimonial-card {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .testimonial-card:before {
+      content: '“';
+      position: absolute;
+      top: 0;
+      left: 1rem;
+      font-size: 4rem;
+      color: var(--light-gray);
+      opacity: 0.5;
+    }
+
+    .testimonial-text {
+      font-style: italic;
+      color: var(--gray);
+      margin-bottom: 1rem;
+    }
+
+    .testimonial-author {
+      font-weight: 600;
+      color: var(--black);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .stat-item {
+      text-align: center;
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: 50%;
+      width: 160px;
+      height: 160px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+      margin: 0 auto;
+    }
+
+    .stat-number {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    .stat-label {
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+
+    .how-it-works {
+      background: var(--white);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .step {
+      padding: 2rem;
+      background: var(--white);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .step:hover {
+      transform: translateY(-5px);
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: var(--black);
+      color: var(--white);
+      border-radius: 50%;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    .step h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .step p {
+      color: var(--gray);
+    }
+
+    .app-download {
+      text-align: center;
+    }
+
+    .app-download p {
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      color: var(--gray);
+    }
+
+    .app-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .app-btn {
+      display: flex;
+      align-items: center;
+      background: var(--black);
+      color: var(--white);
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .app-btn:hover {
+      background: var(--dark-gray);
+      transform: translateY(-3px);
+    }
+
+    .app-btn i {
+      font-size: 1.5rem;
+      margin-right: 0.5rem;
+    }
+
+    .app-btn.android {
+      background: var(--gray);
+    }
+
+    .app-btn.android:hover {
+      background: var(--dark-gray);
+    }
+
+    footer {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      background: var(--white);
+      border-top: 1px solid var(--light-gray);
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-links a {
+      color: var(--gray);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--black);
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .social-links a {
+      color: var(--gray);
+      font-size: 1.25rem;
+      transition: color 0.3s ease;
+    }
+
+    .social-links a:hover {
+      color: var(--black);
+    }
+
+    footer p {
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+
+    @media (min-width: 1024px) {
+      .menu-toggle {
+        display: none;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .sidebar-overlay {
+        display: none;
+      }
+
+      .header {
+        padding: 1rem 3rem;
+      }
+
+      .nav-desktop {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+      }
+
+      .nav-desktop a {
+        color: var(--black);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        position: relative;
+        transition: color 0.2s ease;
+      }
+
+      .nav-desktop a:after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -6px;
+        left: 0;
+        background: var(--black);
+        transition: width 0.3s ease;
+      }
+
+      .nav-desktop a:hover {
+        color: var(--dark-gray);
+      }
+
+      .nav-desktop a:hover:after {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 260px;
+        left: -260px;
+      }
+
+      .header {
+        padding: 0.75rem 1.5rem;
+      }
+
+      .menu-toggle {
+        font-size: 1.6rem;
+      }
+
+      .logo {
+        font-size: 1.3rem;
+      }
+
+      .hero {
+        padding: 4rem 1rem;
+        min-height: auto;
+      }
+
+      .cta {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .box {
+        max-width: 320px;
+      }
+
+      section {
+        padding: 3rem 1rem;
+      }
+
+      .features, .testimonial-grid, .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-item {
+        width: 140px;
+        height: 140px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .sidebar {
+        width: 240px;
+        left: -240px;
+      }
+
+      .sidebar ul {
+        padding: 1.5rem 1rem;
+      }
+
+      .sidebar ul li a {
+        font-size: 1rem;
+      }
+
+      .header {
+        padding: 0.5rem 1rem;
+      }
+
+      .menu-toggle {
+        font-size: 1.4rem;
+      }
+
+      .logo {
+        font-size: 1.2rem;
+      }
+
+      .hero {
+        padding: 3rem 0.75rem;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 5vw, 2.5rem);
+      }
+
+      #typewriter {
+        font-size: 1rem;
+      }
+
+      .illustration {
+        width: clamp(150px, 35vw, 200px);
+      }
+
+      .section-title {
+        font-size: clamp(1.5rem, 4vw, 2rem);
+      }
+
+      .feature-card, .testimonial-card, .step {
+        padding: 1.5rem;
+      }
+
+      .stat-item {
+        width: 120px;
+        height: 120px;
+      }
+
+      .app-buttons {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .app-btn {
+        width: 100%;
+        max-width: 240px;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="particles-js"></div>
+
+<div class="sidebar">
+  <button class="close-btn"><i class="fas fa-times"></i></button>
+  <ul>
+    <li><a href="#features">Why Finna</a></li>
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#stats">Stats</a></li>
+    <li><a href="#testimonials">Testimonials</a></li>
+    <li><a href="#app-download">Get the App</a></li>
+  </ul>
+</div>
+
+<div class="sidebar-overlay"></div>
+
+<div class="header">
+  <button class="menu-toggle"><i class="fas fa-bars"></i></button>
+  <div class="logo">Finna</div>
+  <div class="nav-desktop">
+    <a href="#features">Why Finna</a>
+    <a href="#how-it-works">How It Works</a>
+    <a href="#stats">Stats</a>
+    <a href="#testimonials">Testimonials</a>
+    <a href="#app-download">Get the App</a>
+  </div>
+</div>
+
+<div class="container">
+  <section class="hero">
+    <lottie-player 
+      src="https://assets2.lottiefiles.com/packages/lf20_touohxv0.json"  
+      background="transparent"  
+      speed="1"  
+      class="illustration"  
+      loop  
+      autoplay>
+    </lottie-player>
+    <h1>Finna Your Future</h1>
+    <div id="typewriter"></div>
+    <div class="cta">
+      <div class="box">
+        <h2>Job Seeker</h2>
+        <button class="btn btn-seeker" onclick="location.href='seeker-signup.html'">Sign Up</button>
+        <button class="btn btn-outline" onclick="location.href='seeker-login.html'">Log In</button>
+      </div>
+      <div class="box">
+        <h2>Recruiter</h2>
+        <button class="btn btn-recruiter" onclick="location.href='recruiter-signup.html'">Sign Up</button>
+        <button class="btn btn-outline" onclick="location.href='recruiter-login.html'">Log In</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <h2 class="section-title">Why Finna?</h2>
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+        <h3>Efficient Matching</h3>
+        <p>Connect with relevant opportunities instantly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-robot"></i></div>
+        <h3>Smart Technology</h3>
+        <p>AI adapts to your preferences over time.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+        <h3>Trusted Network</h3>
+        <p>Verified profiles ensure quality connections.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="how-it-works">
+    <h2 class="section-title">How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Create Profile</h3>
+        <p>Showcase your skills and goals.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Discover</h3>
+        <p>Match with jobs or talent effortlessly.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Connect</h3>
+        <p>Engage and grow your career.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="stats">
+    <h2 class="section-title">Our Impact</h2>
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-number">50K+</div>
+        <div class="stat-label">Matches</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">3K+</div>
+        <div class="stat-label">Companies</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">85%</div>
+        <div class="stat-label">Faster</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">4.9★</div>
+        <div class="stat-label">Rating</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimonials" class="testimonials">
+    <h2 class="section-title">Success Stories</h2>
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <p class="testimonial-text">Found a perfect startup role in two weeks.</p>
+        <div class="testimonial-author">— Sarah K., Designer</div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">Reduced hiring time by 60%.</p>
+        <div class="testimonial-author">— Michael T., Recruiter</div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">Three strong offers in a month.</p>
+        <div class="testimonial-author">— David R., Engineer</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="app-download" class="app-download">
+    <h2 class="section-title">Get the App</h2>
+    <p>Manage your career on the go with Finna.</p>
+    <div class="app-buttons">
+      <a href="#" class="app-btn apple">
+        <i class="fab fa-apple"></i> App Store
+      </a>
+      <a href="#" class="app-btn android">
+        <i class="fab fa-google-play"></i> Google Play
+      </a>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="#">About</a>
+    <a href="#">Careers</a>
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="social-links">
+    <a href="#"><i class="fab fa-twitter"></i></a>
+    <a href="#"><i class="fab fa-linkedin"></i></a>
+    <a href="#"><i class="fab fa-instagram"></i></a>
+    <a href="#"><i class="fab fa-facebook"></i></a>
+  </div>
+  <p>© 2025 Finna. All rights reserved.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+  particlesJS("particles-js", {
+    particles: {
+      number: { value: 50 },
+      color: { value: "#1a1a1a" },
+      shape: { type: "circle" },
+      opacity: { value: 0.4 },
+      size: { value: 2.5 },
+      move: { 
+        enable: true, 
+        speed: 0.8,
+        direction: "none",
+        random: true,
+        straight: false,
+        out_mode: "out"
+      },
+      line_linked: {
+        enable: true,
+        distance: 120,
+        color: "#1a1a1a",
+        opacity: 0.1,
+        width: 1
+      }
+    },
+    interactivity: {
+      events: {
+        onhover: { enable: true, mode: "repulse" }
+      }
+    }
+  });
+
+  // Sidebar and Navigation
+  const menuToggle = document.querySelector('.menu-toggle');
+  const sidebar = document.querySelector('.sidebar');
+  const closeBtn = document.querySelector('.sidebar .close-btn');
+  const overlay = document.querySelector('.sidebar-overlay');
+  const header = document.querySelector('.header');
+  const logo = document.querySelector('.logo');
+
+  function toggleSidebar() {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+    document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : 'auto';
+  }
+
+  menuToggle.addEventListener('click', toggleSidebar);
+  closeBtn.addEventListener('click', toggleSidebar);
+  overlay.addEventListener('click', toggleSidebar);
+
+  // Scroll effect for header
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('nav-scrolled', window.scrollY > 50);
+  });
+
+  // Close sidebar and smooth scroll when clicking a link
+  sidebar.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+      document.body.style.overflow = 'auto';
+      
+      const targetId = link.getAttribute('href');
+      const targetSection = document.querySelector(targetId);
+      targetSection.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  // Logo scroll to top
+  logo.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+
+  // Section scroll animations
+  const sections = document.querySelectorAll('section');
+  
+  function checkSections() {
+    sections.forEach(section => {
+      const sectionTop = section.getBoundingClientRect().top;
+      const triggerPoint = window.innerHeight * 0.8;
+      
+      if (sectionTop < triggerPoint) {
+        section.classList.add('visible');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', checkSections);
+
+  // Typewriter Effect
+  const messages = [
+    "Your career, matched perfectly.",
+    "Hire talent with ease.",
+    "Connect to opportunity now."
+  ];
+  let i = 0, j = 0, current = "", isDeleting = false;
+  const typewriter = document.getElementById("typewriter");
+
+  function typeEffect() {
+    if (i < messages.length) {
+      const fullText = messages[i];
+      if (isDeleting) {
+        current = fullText.substring(0, j--);
+      } else {
+        current = fullText.substring(0, j++);
+      }
+      typewriter.textContent = current;
+
+      if (!isDeleting && j === fullText.length) {
+        isDeleting = true;
+        setTimeout(typeEffect, 1500);
+      } else if (isDeleting && j === 0) {
+        isDeleting = false;
+        i = (i + 1) % messages.length;
+        setTimeout(typeEffect, 500);
+      } else {
+        setTimeout(typeEffect, isDeleting ? 30 : 80);
+      }
+    }
+  }
+
+  // Ensure page loads at top and starts animations
+  window.addEventListener('load', () => {
+    window.scrollTo(0, 0); // Force scroll to top on load
+    typeEffect();
+    checkSections();
+  });
+</script>
+
+</body>
+</html>

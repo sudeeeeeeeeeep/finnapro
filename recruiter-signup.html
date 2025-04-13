@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Finna – Recruiter Sign Up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+  <style>
+    :root {
+      --black: #1a1a1a;
+      --dark-gray: #333333;
+      --gray: #666666;
+      --light-gray: #e5e5e5;
+      --white: #ffffff;
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+      --shadow-md: 0 6px 12px rgba(0,0,0,0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: var(--white);
+    }
+
+    .container {
+      background: var(--white);
+      padding: 40px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    h2:after {
+      content: '';
+      width: 40px;
+      height: 3px;
+      background: var(--black);
+      position: absolute;
+      bottom: -0.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 14px 16px;
+      margin: 12px 0;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--light-gray);
+      font-size: 1rem;
+      background: var(--white);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--black);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 15px;
+    }
+
+    .btn-primary {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: var(--dark-gray);
+      transform: translateY(-2px);
+    }
+
+    .btn-google {
+      background: var(--white);
+      color: var(--black);
+      border: 2px solid var(--gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-google:hover {
+      border-color: var(--black);
+      transform: translateY(-2px);
+    }
+
+    .btn-google i {
+      font-size: 1.2rem;
+    }
+
+    .error {
+      color: #ff4444;
+      margin-top: 15px;
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+        max-width: 340px;
+      }
+
+      h2 {
+        font-size: 1.75rem;
+      }
+
+      input, textarea {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+      }
+
+      .btn {
+        padding: 12px;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <h2>Recruiter Sign Up</h2>
+    <input type="text" id="fullName" placeholder="Your Full Name" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button class="btn btn-primary" onclick="submitRecruiter()">Sign Up</button>
+    <button class="btn btn-google" onclick="signUpWithGoogle()">
+      <i class="fab fa-google"></i> Sign Up with Google
+    </button>
+    <div class="error" id="errorMsg"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDkh6B0e8A6uZrSxqqXDaRE9mnCOQMTHQM",
+      authDomain: "finna-52a34.firebaseapp.com",
+      projectId: "finna-52a34",
+      storageBucket: "finna-52a34.appspot.com",
+      messagingSenderId: "581244699731",
+      appId: "1:581244699731:web:f2947f4651cafbf766b2a6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const googleProvider = new GoogleAuthProvider();
+
+    // Email/Password Sign Up
+    window.submitRecruiter = async function () {
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.textContent = "";
+
+      if (!fullName || !email || !password) {
+        errorMsg.textContent = "Please fill in all fields.";
+        return;
+      }
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = userCredential.user.uid;
+
+        const recruiterData = {
+          uid,
+          fullName,
+          email,
+          role: "recruiter"
+        };
+
+        await setDoc(doc(db, "recruiters", uid), recruiterData);
+
+        alert("✅ Account created. Please complete your company profile.");
+        window.location.href = "recruiter-profile.html";
+      } catch (error) {
+        console.error("❌ Error creating account:", error);
+        if (error.code === 'auth/email-already-in-use') {
+          errorMsg.textContent = "⚠️ Email already in use. Please log in instead.";
+        } else if (error.code === 'auth/weak-password') {
+          errorMsg.textContent = "⚠️ Password should be at least 6 characters.";
+        } else {
+          errorMsg.textContent = "Something went wrong: " + error.message;
+        }
+      }
+    };
+
+    // Google Sign Up
+    window.signUpWithGoogle = async function () {
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.textContent = "";
+
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+
+        const profileRef = doc(db, "recruiters", user.uid);
+        const profileSnap = await getDoc(profileRef);
+
+        if (profileSnap.exists()) {
+          // Account exists, redirect to login page
+          alert("⚠️ This Google account is already registered. Please log in.");
+          window.location.href = "recruiter-login.html";
+        } else {
+          // New Google account, create basic profile
+          const recruiterData = {
+            uid: user.uid,
+            fullName: user.displayName || "Unnamed Recruiter",
+            email: user.email,
+            role: "recruiter"
+          };
+
+          await setDoc(doc(db, "recruiters", user.uid), recruiterData);
+
+          alert("✅ Account created with Google. Please complete your company profile.");
+          window.location.href = "recruiter-profile.html";
+        }
+      } catch (error) {
+        console.error("Google Signup Error:", error.message);
+        if (error.code === 'auth/popup-closed-by-user') {
+          errorMsg.textContent = "⚠️ Google sign-up was cancelled.";
+        } else {
+          errorMsg.textContent = "Something went wrong with Google signup: " + error.message;
+        }
+      }
+    };
+
+    // Particles background
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 50 },
+        color: { value: "#1a1a1a" },
+        shape: { type: "circle" },
+        opacity: { value: 0.4 },
+        size: { value: 2.5 },
+        move: { 
+          enable: true, 
+          speed: 0.8,
+          direction: "none",
+          random: true,
+          straight: false,
+          out_mode: "out"
+        },
+        line_linked: {
+          enable: true,
+          distance: 120,
+          color: "#1a1a1a",
+          opacity: 0.1,
+          width: 1
+        }
+      },
+      interactivity: {
+        events: {
+          onhover: { enable: true, mode: "repulse" }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

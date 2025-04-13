@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Saved Jobs | Finna</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f6fc;
+      padding: 2rem;
+      margin: 0;
+    }
+    h2 {
+      text-align: center;
+    }
+    .job-card {
+      background: white;
+      padding: 20px;
+      margin: 15px auto;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    .tags {
+      margin-top: 10px;
+    }
+    .tag {
+      display: inline-block;
+      background: #C1FF72;
+      color: #000;
+      padding: 5px 10px;
+      border-radius: 15px;
+      margin-right: 6px;
+      font-size: 12px;
+    }
+    .btns {
+      margin-top: 15px;
+    }
+    button {
+      margin-right: 10px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .apply { background: #1E90FF; color: white; }
+    .unsave { background: #ddd; color: black; }
+  </style>
+</head>
+<body>
+
+<h2>Saved Jobs</h2>
+<div id="jobsContainer"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, doc, deleteDoc, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDkh6B0e8A6uZrSxqqXDaRE9mnCOQMTHQM",
+  authDomain: "finna-52a34.firebaseapp.com",
+  projectId: "finna-52a34",
+  storageBucket: "finna-52a34.appspot.com",
+  messagingSenderId: "581244699731",
+  appId: "1:581244699731:web:f2947f4651cafbf766b2a6"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth();
+
+const jobsContainer = document.getElementById('jobsContainer');
+
+async function loadSavedJobs(user) {
+  const q = query(collection(db, "savedJobs"), where("seekerId", "==", user.uid));
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    jobsContainer.innerHTML = "<p style='text-align:center;'>You haven’t saved any jobs yet.</p>";
+    return;
+  }
+
+  for (const docSnap of snapshot.docs) {
+    const savedJob = docSnap.data();
+    const jobId = savedJob.jobId;
+
+    const jobDoc = await getDocs(query(collection(db, "jobs"), where("__name__", "==", jobId)));
+    if (!jobDoc.empty) {
+      const jobData = jobDoc.docs[0].data();
+      const jobDiv = document.createElement("div");
+      jobDiv.className = "job-card";
+      jobDiv.innerHTML = `
+        <h3>${jobData.title}</h3>
+        <p>${jobData.company} — ${jobData.location}</p>
+        <div class="tags">${jobData.keywords.map(k => `<span class="tag">${k}</span>`).join('')}</div>
+        <div class="btns">
+          <button class="apply">Apply</button>
+          <button class="unsave">Unsave</button>
+        </div>
+      `;
+
+      jobDiv.querySelector(".apply").addEventListener("click", async () => {
+        await addDoc(collection(db, "applications"), {
+          jobId,
+          recruiterId: jobData.recruiterId || "",
+          seekerId: user.uid,
+          seekerName: user.displayName || "",
+          seekerEmail: user.email,
+          skills: savedJob.skills || [],
+          appliedAt: Timestamp.now(),
+          status: "pending",
+          jobTitle: jobData.title,
+          company: jobData.company
+        });
+        alert(`✅ Applied to ${jobData.title}`);
+      });
+
+      jobDiv.querySelector(".unsave").addEventListener("click", async () => {
+        await deleteDoc(doc(db, "savedJobs", docSnap.id));
+        alert("❌ Job removed from saved list.");
+        jobDiv.remove();
+      });
+
+      jobsContainer.appendChild(jobDiv);
+    }
+  }
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    loadSavedJobs(user);
+  } else {
+    alert("You need to log in to see saved jobs.");
+    window.location.href = "login.html";
+  }
+});
+</script>
+</body>
+</html>

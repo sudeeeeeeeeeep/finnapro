@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Applications - Finna</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #1E90FF;
+    }
+    .application {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px auto;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .application h2 {
+      margin-top: 0;
+      color: #333;
+    }
+    .application p {
+      margin: 5px 0;
+    }
+    .status {
+      font-weight: bold;
+      color: #1E90FF;
+    }
+  </style>
+</head>
+<body>
+  <h1>My Applications</h1>
+  <div id="applicationsContainer"></div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      getDocs,
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+    // ✅ YOUR UPDATED FIREBASE CONFIG
+    const firebaseConfig = {
+      apiKey: "AIzaSyDkh6B0e8A6uZrSxqqXDaRE9mnCOQMTHQM",
+      authDomain: "finna-52a34.firebaseapp.com",
+      projectId: "finna-52a34",
+      storageBucket: "finna-52a34.appspot.com",
+      messagingSenderId: "581244699731",
+      appId: "1:581244699731:web:default"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const applicationsContainer = document.getElementById("applicationsContainer");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const seekerId = user.uid;
+        const applicationsRef = collection(db, "applications");
+        const q = query(applicationsRef, where("seekerId", "==", seekerId));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          applicationsContainer.innerHTML = "<p style='text-align:center;'>You haven't applied to any jobs yet.</p>";
+        }
+
+        for (const docSnap of querySnapshot.docs) {
+          const application = docSnap.data();
+
+          // Fetch job details using jobId
+          let jobData = {};
+          if (application.jobId) {
+            const jobDoc = await getDoc(doc(db, "jobs", application.jobId));
+            if (jobDoc.exists()) {
+              jobData = jobDoc.data();
+            }
+          }
+
+          const applicationElement = document.createElement("div");
+          applicationElement.className = "application";
+
+          applicationElement.innerHTML = `
+            <h2>${application.jobTitle || jobData.title || "Job Title"}</h2>
+            <p><strong>Company:</strong> ${application.company || jobData.company || "N/A"}</p>
+            <p><strong>Location:</strong> ${jobData.location || "N/A"}</p>
+            <p><strong>Workplace:</strong> ${jobData.workplace || "N/A"}</p>
+            <p><strong>Status:</strong> <span class="status">${application.status || "pending"}</span></p>
+            <p><strong>Applied At:</strong> ${application.appliedAt ? new Date(application.appliedAt.seconds * 1000).toLocaleString() : "N/A"}</p>
+          `;
+          applicationsContainer.appendChild(applicationElement);
+        }
+      } else {
+        applicationsContainer.innerHTML = "<p style='text-align:center;'>Please log in to view your applications.</p>";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Finna – Recruiter Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+  <style>
+    :root {
+      --black: #1a1a1a;
+      --dark-gray: #333333;
+      --gray: #666666;
+      --light-gray: #e5e5e5;
+      --white: #ffffff;
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+      --shadow-md: 0 6px 12px rgba(0,0,0,0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: var(--white);
+    }
+
+    .container {
+      background: var(--white);
+      padding: 40px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    h2:after {
+      content: '';
+      width: 40px;
+      height: 3px;
+      background: var(--black);
+      position: absolute;
+      bottom: -0.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 14px 16px;
+      margin: 12px 0;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--light-gray);
+      font-size: 1rem;
+      background: var(--white);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--black);
+      box-shadow: var(--shadow-sm);
+    }
+
+    select {
+      appearance: none;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="%23666666" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 16px center;
+      background-size: 12px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .tag {
+      padding: 8px 12px;
+      background: var(--light-gray);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .tag:hover {
+      background: #d1d5db;
+    }
+
+    .tag.selected {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+    }
+
+    .btn:hover {
+      background: var(--dark-gray);
+      transform: translateY(-2px);
+    }
+
+    #logoPreview {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border: 1px solid var(--light-gray);
+      border-radius: var(--radius-sm);
+      margin-top: 12px;
+    }
+
+    strong {
+      font-weight: 600;
+      color: var(--black);
+      display: block;
+      margin: 12px 0 8px;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+        max-width: 340px;
+      }
+
+      h2 {
+        font-size: 1.75rem;
+      }
+
+      input, select, textarea {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+      }
+
+      .btn {
+        padding: 12px;
+        font-size: 0.95rem;
+      }
+
+      .tag {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+      }
+
+      #logoPreview {
+        width: 80px;
+        height: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <h2>Complete Your Recruiter Profile</h2>
+
+    <input type="text" id="orgName" placeholder="Organization Name" />
+    <input type="text" id="recruiterName" placeholder="Your Name" />
+    <input type="text" id="location" placeholder="Location (e.g., Kochi)" />
+    <input type="url" id="website" placeholder="Company Website (optional)" />
+    <select id="companySize">
+      <option value="">Select Company Size</option>
+      <option value="1-10">1-10 employees</option>
+      <option value="11-50">11-50 employees</option>
+      <option value="51-200">51-200 employees</option>
+      <option value="201-1000">201-1000 employees</option>
+      <option value="1000+">1000+ employees</option>
+    </select>
+
+    <textarea id="description" rows="5" placeholder="Describe your company, culture, and what you're hiring for..."></textarea>
+
+    <strong>Select Industry Tags:</strong>
+    <div class="tag-container" id="industryContainer"></div>
+
+    <div>
+      <strong>Upload Company Logo (Max 1MB):</strong>
+      <input type="file" id="logoInput" accept="image/*" />
+      <img id="logoPreview" style="display:none;" />
+    </div>
+
+    <button class="btn" onclick="saveRecruiterProfile()">Save Profile</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDkh6B0e8A6uZrSxqqXDaRE9mnCOQMTHQM",
+      authDomain: "finna-52a34.firebaseapp.com",
+      projectId: "finna-52a34",
+      storageBucket: "finna-52a34.appspot.com",
+      messagingSenderId: "581244699731",
+      appId: "1:581244699731:web:f2947f4651cafbf766b2a6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    let currentUser = null;
+    let selectedIndustries = [];
+    let logoFile = null;
+
+    const industryContainer = document.getElementById("industryContainer");
+
+    async function loadIndustryTags() {
+      const docSnap = await getDoc(doc(db, "tags", "industries"));
+      if (docSnap.exists()) {
+        const industries = docSnap.data().skills || [];
+        industries.forEach(ind => {
+          const tag = document.createElement("div");
+          tag.classList.add("tag");
+          tag.textContent = ind;
+          tag.onclick = () => {
+            tag.classList.toggle("selected");
+            if (selectedIndustries.includes(ind)) {
+              selectedIndustries = selectedIndustries.filter(t => t !== ind);
+            } else {
+              selectedIndustries.push(ind);
+            }
+          };
+          industryContainer.appendChild(tag);
+        });
+      }
+    }
+
+    async function loadProfile(uid) {
+      const docSnap = await getDoc(doc(db, "recruiters", uid));
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        document.getElementById("orgName").value = data.organization || data.company?.name || '';
+        document.getElementById("recruiterName").value = data.name || data.fullName || '';
+        document.getElementById("location").value = data.location || data.company?.location || '';
+        document.getElementById("website").value = data.website || data.company?.website || '';
+        document.getElementById("companySize").value = data.size || '';
+        document.getElementById("description").value = data.description || data.company?.description || '';
+        selectedIndustries = data.industries || data.company?.industry ? [data.company.industry] : [];
+
+        setTimeout(() => {
+          document.querySelectorAll('.tag').forEach(tagEl => {
+            if (selectedIndustries.includes(tagEl.textContent)) {
+              tagEl.classList.add('selected');
+            }
+          });
+        }, 500);
+
+        if (data.logoURL) {
+          const preview = document.getElementById("logoPreview");
+          preview.src = data.logoURL;
+          preview.style.display = "block";
+        }
+      }
+    }
+
+    document.getElementById("logoInput").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (file.size > 1024 * 1024) {
+        alert("Logo exceeds 1MB size limit.");
+        e.target.value = "";
+        return;
+      }
+
+      logoFile = file;
+      const preview = document.getElementById("logoPreview");
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = "block";
+    });
+
+    async function saveRecruiterProfile() {
+      const orgName = document.getElementById("orgName").value.trim();
+      const recruiterName = document.getElementById("recruiterName").value.trim();
+      const location = document.getElementById("location").value.trim();
+      const website = document.getElementById("website").value.trim();
+      const companySize = document.getElementById("companySize").value;
+      const description = document.getElementById("description").value.trim();
+
+      if (!orgName || !recruiterName || !location || !companySize || selectedIndustries.length === 0 || !description) {
+        alert("Please fill all required fields and select at least one industry tag.");
+        return;
+      }
+
+      let logoURL = "";
+      const existingDoc = await getDoc(doc(db, "recruiters", currentUser.uid));
+      if (existingDoc.exists() && existingDoc.data().logoURL) {
+        logoURL = existingDoc.data().logoURL;
+      }
+
+      if (logoFile) {
+        const logoRef = ref(storage, `logos/${currentUser.uid}`);
+        await uploadBytes(logoRef, logoFile);
+        logoURL = await getDownloadURL(logoRef);
+      }
+
+      try {
+        await setDoc(doc(db, "recruiters", currentUser.uid), {
+          organization: orgName,
+          name: recruiterName,
+          location,
+          website,
+          size: companySize,
+          industries: selectedIndustries,
+          logoURL,
+          description,
+          email: currentUser.email,
+          role: "recruiter",
+          lastUpdated: new Date()
+        }, { merge: true }); // Use merge to preserve existing fields like uid and email from signup
+
+        alert("✅ Profile saved successfully!");
+        window.location.href = "recruiter-dashboard.html";
+      } catch (err) {
+        console.error("Error saving profile:", err);
+        alert("❌ Error saving profile: " + err.message);
+      }
+    }
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        currentUser = user;
+        loadIndustryTags();
+        loadProfile(user.uid);
+      } else {
+        window.location.href = "recruiter-login.html";
+      }
+    });
+
+    window.saveRecruiterProfile = saveRecruiterProfile;
+    
+    // Particles background
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 50 },
+        color: { value: "#1a1a1a" },
+        shape: { type: "circle" },
+        opacity: { value: 0.4 },
+        size: { value: 2.5 },
+        move: { 
+          enable: true, 
+          speed: 0.8,
+          direction: "none",
+          random: true,
+          straight: false,
+          out_mode: "out"
+        },
+        line_linked: {
+          enable: true,
+          distance: 120,
+          color: "#1a1a1a",
+          opacity: 0.1,
+          width: 1
+        }
+      },
+      interactivity: {
+        events: {
+          onhover: { enable: true, mode: "repulse" }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
